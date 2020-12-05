@@ -1,4 +1,4 @@
-<?php $config = require('./.config.php'); ?>
+<?php $config = require(dirname(__FILE__) . '/.config.php'); ?>
 
 <!DOCTYPE html>
 <html lang="en">
