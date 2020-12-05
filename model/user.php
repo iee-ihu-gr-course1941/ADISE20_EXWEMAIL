@@ -5,7 +5,6 @@ class User
     private $db;
     private $id;
     private $username;
-    private $password;
 
     public function __construct()
     {
@@ -40,6 +39,10 @@ class User
             die('Bad credentials');
         }
 
+        unset($password);
+        unset($hash);
+        unset($user['password']);
+
         $this->username = $username;
         $this->id = $user['id'];
 
@@ -53,7 +56,7 @@ class User
         }
 
         $this->username = $username;
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        $hash = password_hash($password, PASSWORD_BCRYPT);
         unset($password);
 
         $sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
@@ -62,12 +65,24 @@ class User
             die('Insertion failed: ' . $this->db->error);
         }
 
-        $stmt->bind_param('ss', $this->username, $this->password);
+        $stmt->bind_param('ss', $this->username, $hash);
         if (!$stmt->execute()) {
             die('Insertion failed: ' . $stmt->error);
         }
 
         $this->id = $stmt->insert_id;
         return $this->id;
+    }
+
+    public function toArray()
+    {
+        if (!isset($this->username)) {
+            die('Not logged in');
+        }
+
+        return [
+            'id' => $this->id,
+            'username' => $this->username
+        ];
     }
 }
