@@ -2,7 +2,7 @@ FROM php:7.0-apache-stretch AS base
 
 RUN apt update && \
     apt install -y libcurl3-dev libpng-dev libedit-dev libxml2-dev && \
-    docker-php-ext-install curl gd json mbstring pdo_mysql opcache readline xml zip && \
+    docker-php-ext-install curl gd json mbstring pdo_mysql opcache readline xml zip mysqli && \
     apt purge -y libcurl3-dev libpng-dev libedit-dev libxml2-dev && \
     apt clean && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt

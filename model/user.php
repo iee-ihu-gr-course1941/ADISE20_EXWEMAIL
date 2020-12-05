@@ -1,13 +1,11 @@
 <?php namespace model;
 
-use mysqli;
-
 class User
 {
-    private mysqli $db;
-    private int $id;
-    private string $username;
-    private string $password;
+    private $db;
+    private $id;
+    private $username;
+    private $password;
 
     public function __construct()
     {
