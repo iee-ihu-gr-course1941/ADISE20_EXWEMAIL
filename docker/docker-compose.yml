@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.1
+    restart: always
+    volumes:
+      - exw-email-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: exw-email
+      MYSQL_USER: exw-email
+      MYSQL_PASSWORD: exw-password
+  apache:
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8000:80"
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.apache
+
+volumes:
+  exw-email-data: {}
