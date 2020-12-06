@@ -9,6 +9,11 @@ class User
     public function __construct()
     {
         $this->db = require(dirname(__FILE__) . '/../database/db.php');
+
+        if (isset($_SESSION['user'])) {
+            $user = $_SESSION['user'];
+            $this->loadData($user);
+        }
     }
 
     public function login(string $username, string $password)
@@ -30,7 +35,7 @@ class User
 
         $result = $stmt->get_result();
         if (!$result) {
-            die('36 Bad credentials');
+            die('Bad credentials');
         }
 
         $user = $result->fetch_assoc();
@@ -43,8 +48,9 @@ class User
         unset($hash);
         unset($user['password']);
 
-        $this->username = $username;
-        $this->id = $user['id'];
+        $this->loadData($user);
+
+        $_SESSION['user'] = $this->toArray();
 
         return $this->id;
     }
@@ -72,6 +78,12 @@ class User
 
         $this->id = $stmt->insert_id;
         return $this->id;
+    }
+
+    private function loadData($data)
+    {
+        $this->id = $data['id'];
+        $this->username = $data['username'];
     }
 
     public function toArray()

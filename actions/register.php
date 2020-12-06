@@ -1,9 +1,13 @@
 <?php
 
 use model\User;
+use model\Session;
 
 return (function () {
+    include dirname(__FILE__) . '/../model/session.php';
     include dirname(__FILE__) . '/../model/user.php';
+
+    Session::initialize();
 
     $username = $_POST['username'];
     $password = $_POST['password'];

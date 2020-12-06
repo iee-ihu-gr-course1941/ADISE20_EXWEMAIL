@@ -20,7 +20,7 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS sessions;
 CREATE TABLE sessions (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  sid VARCHAR(16) NOT NULL, -- Session ID from cookie
+  sid VARCHAR(255) NOT NULL, -- Session ID from cookie
   data VARCHAR(255) NOT NULL, -- JSON string
   CONSTRAINT sessions_sid_uindex UNIQUE (sid)
 );
