@@ -1,0 +1,11 @@
+{
+  "components": {
+    "loginForm": [
+      "login-form.html"
+    ],
+    "test": [
+      "test.html",
+      "test.js"
+    ]
+  }
+}
