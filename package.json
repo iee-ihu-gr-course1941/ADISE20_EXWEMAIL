@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "standard": "^16.0.3"
+  },
+  "standard": {
+    "globals": [
+      "fetch",
+      "HTMLDivElement"
+    ]
+  }
+}
