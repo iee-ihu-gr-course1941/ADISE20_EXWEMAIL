@@ -17,6 +17,33 @@ RUN a2dissite 000-default.conf && \
 
 FROM server-config AS server
 
+# Dev environment dependencies (optional) - BEGIN
+# RUN cd /root && \
+#     apt update && \
+#     apt install -y curl wget gnupg2 ca-certificates lsb-release apt-transport-https openssh-server screen git unzip && \
+#     wget https://packages.sury.org/php/apt.gpg && \
+#     apt-key add apt.gpg && \
+#     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php7.list && \
+#     mv /etc/apt/preferences.d/no-debian-php /tmp/ && \
+#     apt update && \
+#     apt install -y php7.2 php7.2-cli php7.2-common php7.2-mbstring && \
+#     mv /tmp/no-debian-php /etc/apt/preferences.d/ && \
+#     curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh && \
+#     bash nodesource_setup.sh && \
+#     apt install -y nodejs && \
+#     apt clean && rm -rf /var/lib/apt/lists/* && \
+#     rm -rf /var/cache/apt && \
+#     ssh-keygen -A && \
+#     mkdir /run/sshd && \
+#     curl -sS https://getcomposer.org/installer -o composer-setup.php && \
+#     php7.2 composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+#     mkdir /usr/local/composer && \
+#     export COMPOSER_VENDOR_DIR=/usr/local/composer && \
+#     composer global require "squizlabs/php_codesniffer=*" && \
+#     ln -s /usr/local/composer/bin/* /usr/local/composer/ && \
+#     npm i -g standard
+# Dev environment dependencies - END
+
 RUN useradd -ms /bin/bash exw-email
 USER exw-email
 RUN mkdir ~/public_html
