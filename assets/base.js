@@ -1,61 +1,72 @@
 window.onload = async function () {
-  const randomString = () => (Date.now() + Math.random()).toString(16).replace('.', '')
-
   const session = JSON.parse(document.querySelector('meta[name="session"]').getAttribute('content'))
   const assets = JSON.parse(document.querySelector('meta[name="assets"]').getAttribute('content'))
   const app = document.getElementById('app')
 
+  const componentsAssets = new Map()
+
+  Object.keys(assets.components)
+    .filter(name => name.charAt(0) !== '_')
+    .forEach(name => componentsAssets.set(`component-${name}`, assets.components[name].map(file => ({ name: file, url: assets.components._url + file }))))
+
+  Object.keys(assets.pages)
+    .filter(name => name.charAt(0) !== '_')
+    .forEach(name => componentsAssets.set(`page-${name}`, assets.pages[name].map(file => ({ name: file, url: assets.pages._url + file }))))
+
   const componentsCache = new Map()
+
+  let componentsCounter = 0
+  let scriptsCounter = 0
 
   window.COMPONENTS = new Map()
   window.SCRIPTS = new Map()
 
   if (!session.user) {
-    const component1 = renderComponent('loginForm')
-    app.appendChild(await component1)
-
-    const component2 = renderComponent('loginForm')
-    app.appendChild(await component2)
-
-    const component3 = renderComponent('test')
-    app.appendChild(await component3)
-
-    const component4 = renderComponent('test')
-    app.appendChild(await component4)
+    renderPage('login')
   }
 
-  async function renderComponent (name) {
-    if (!assets.components || !assets.components[name]) {
-      throw new Error(`Component ${name} does not exist`)
+  function fetchComponent (name, isPage = false) {
+    const _name = isPage ? `page-${name}` : `component-${name}`
+
+    if (!componentsAssets.has(_name)) {
+      throw new Error(`${isPage ? 'Page' : 'Component'} ${name} does not exist`)
     }
 
-    const componentMeta = assets.components[name]
+    const componentMeta = componentsAssets.get(_name)
 
-    const componentData = componentsCache.has(name)
+    const componentDataPromise = componentsCache.has(_name)
       ? componentsCache
-          .get(name)
-          .map(({ headers, data }) => ({ headers, data }))
-      : await Promise.all(
-        componentMeta.map(meta => fetch(`assets/components/${meta}`))
+          .get(_name)
+          .then(data => data.map(file => ({ ...file })))
+      : Promise.all(
+        componentMeta.map(async meta => ({ name: meta.name, data: await fetch(meta.url) }))
       ).then(results => Promise.all(
         results.map(async result => ({
-          headers: result.headers,
-          data: await result.text()
+          name: result.name,
+          headers: result.data.headers,
+          data: await result.data.text()
         }))
       ))
 
-    if (!componentsCache.has(name)) {
+    if (!componentsCache.has(_name)) {
       componentsCache.set(
-        name,
-        componentData.map(({ headers, data }) => ({ headers, data }))
+        _name,
+        componentDataPromise.then(data => data.map(file => ({ ...file })))
       )
     }
 
-    let componentKey
-    do {
-      componentKey = randomString()
-    } while (window.COMPONENTS.has(componentKey))
+    return componentDataPromise
+  }
+
+  async function parseComponent (name, isPage = false) {
+    const _name = isPage ? `page-${name}` : `component-${name}`
+
+    const componentMeta = componentsAssets.get(_name)
+
+    const componentKey = `${_name}--${componentsCounter++}`
     window.COMPONENTS.set(componentKey, null)
+
+    const componentData = await fetchComponent(name, isPage)
 
     componentData.forEach((file, index) => {
       const contentType = file.headers.get('Content-Type')
@@ -68,11 +79,11 @@ window.onload = async function () {
           throw new Error(`HTML ${componentMeta[index]} is invalid`)
         }
 
-        html.className = 'component'
+        html.className = isPage ? 'page-body' : 'component-body'
         file.html = html
       } else if (/text\/css/.test(contentType)) {
         const el = document.createElement('style')
-        el.innerText = file.data.split('#{SELF}').join(`#${componentKey}`)
+        el.innerText = file.data.split('#{SELF}').join(`[data-component-key="${componentKey}"]`)
         file.element = el
       } else if (/application\/javascript/.test(contentType)) {
         /* eslint-disable-next-line no-eval */
@@ -81,24 +92,22 @@ window.onload = async function () {
           throw new Error(`Script ${componentMeta[index]} is invalid`)
         }
 
-        let key
-        do {
-          key = `${componentKey}-${randomString()}`
-        } while (window.SCRIPTS.has(key))
+        const key = `${componentKey}-${scriptsCounter++}`
 
         window.SCRIPTS.set(key, script)
         const el = document.createElement('script')
-        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.getElementById('${componentKey}'))`
+        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.querySelector('[data-component-key="${componentKey}"]'))`
         file.element = el
       }
     })
 
     if (componentData.filter(data => Object.prototype.hasOwnProperty.call(data, 'html')).length !== 1) {
-      throw new Error(`Component ${name} is invalid`)
+      throw new Error(`${isPage ? 'Page' : 'Component'} ${name} is invalid`)
     }
 
     const component = document.createElement('div')
-    component.setAttribute('id', componentKey)
+    component.setAttribute('data-component-key', componentKey)
+    component.setAttribute('class', `component component--${name}`)
     window.COMPONENTS.set(componentKey, component)
 
     componentData
@@ -110,6 +119,24 @@ window.onload = async function () {
         }
       })
 
-    return component
+    component.querySelectorAll('div[data-component]')
+      .forEach(
+        component => parseComponent(component.getAttribute('data-component'))
+          .then(({ component: rendered }) => component.parentNode.replaceChild(rendered, component))
+      )
+
+    return { component, componentKey }
+  }
+
+  async function renderPage (name) {
+    const { component, componentKey } = await parseComponent(name, true)
+
+    while (app.firstChild) {
+      app.firstChild.remove()
+    }
+
+    app.append(...component.children)
+    app.setAttribute('data-current-page', name)
+    app.setAttribute('data-component-key', componentKey)
   }
 }

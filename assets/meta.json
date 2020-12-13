@@ -1,11 +1,19 @@
 {
   "components": {
-    "loginForm": [
+    "_url": "assets/components/",
+    "login-form": [
       "login-form.html"
     ],
     "test": [
       "test.html",
       "test.js"
+    ]
+  },
+  "pages": {
+    "_url": "assets/pages/",
+    "login": [
+      "login.html",
+      "login.js"
     ]
   }
 }
