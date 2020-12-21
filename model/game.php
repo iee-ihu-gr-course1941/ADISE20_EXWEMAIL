@@ -88,8 +88,21 @@ class Game implements \JsonSerializable
         return $this->id;
     }
 
-    public function join()
+    public function join($gameId)
     {
+        $userId = $this->user->toArray()['id'];
+        $sql = 'INSERT INTO players (user, game) VALUES (?, ?)';
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            die('Insertion failed: ' . $this->db->error);
+        }
+
+        $stmt->bind_param('ii', $userId, $gameId);
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+
+        $stmt->close();
     }
 
     public function leave()
