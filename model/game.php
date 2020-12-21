@@ -102,6 +102,7 @@ class Game implements \JsonSerializable
             die('Insertion failed: ' . $stmt->error);
         }
 
+        $this->id = $gameId;
         $stmt->close();
     }
 
