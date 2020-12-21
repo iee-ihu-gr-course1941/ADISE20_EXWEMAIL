@@ -83,7 +83,7 @@ window.onload = async function () {
         file.html = html
       } else if (/text\/css/.test(contentType)) {
         const el = document.createElement('style')
-        el.innerText = file.data.split('#{SELF}').join(`[data-component-key="${componentKey}"]`)
+        el.innerText = file.data.split('#{SELF}').join(`[data-base-component-key="${componentKey}"]`)
         file.element = el
       } else if (/application\/javascript/.test(contentType)) {
         /* eslint-disable-next-line no-eval */
@@ -96,7 +96,7 @@ window.onload = async function () {
 
         window.SCRIPTS.set(key, script)
         const el = document.createElement('script')
-        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.querySelector('[data-component-key="${componentKey}"]'))`
+        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.querySelector('[data-base-component-key="${componentKey}"]'))`
         file.element = el
       }
     })
@@ -106,7 +106,7 @@ window.onload = async function () {
     }
 
     const component = document.createElement('div')
-    component.setAttribute('data-component-key', componentKey)
+    component.setAttribute('data-base-component-key', componentKey)
     component.setAttribute('class', `component component--${name}`)
     window.COMPONENTS.set(componentKey, component)
 
@@ -119,9 +119,9 @@ window.onload = async function () {
         }
       })
 
-    component.querySelectorAll('div[data-component]')
+    component.querySelectorAll('div[data-base-component]')
       .forEach(
-        component => parseComponent(component.getAttribute('data-component'))
+        component => parseComponent(component.getAttribute('data-base-component'))
           .then(({ component: rendered }) => component.parentNode.replaceChild(rendered, component))
       )
 
@@ -136,7 +136,7 @@ window.onload = async function () {
     }
 
     app.append(...component.children)
-    app.setAttribute('data-current-page', name)
-    app.setAttribute('data-component-key', componentKey)
+    app.setAttribute('data-base-current-page', name)
+    app.setAttribute('data-base-component-key', componentKey)
   }
 }

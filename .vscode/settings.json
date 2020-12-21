@@ -1,0 +1,6 @@
+{
+  "phpcs.executablePath": "/usr/local/bin/phpcs",
+  "html.customData": [
+    "./html.html-data.json"
+  ]
+}
