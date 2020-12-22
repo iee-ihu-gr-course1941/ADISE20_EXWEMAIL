@@ -93,13 +93,16 @@ window.onload = async function () {
 
         const key = `${componentKey}-${scriptsCounter++}`
 
-        document.addEventListener(key, function handler () {
+        document.addEventListener(key, async function handler () {
           document.removeEventListener(key, handler)
+          await Promise.resolve() // Make sure page is rendered before executing
           const self = document.querySelector(`[data-base-component-key="${componentKey}"]`)
+          self.removeChild(document.getElementById(key))
           return script({ self })
         })
 
         const el = document.createElement('script')
+        el.setAttribute('id', key)
         el.innerText = `document.dispatchEvent(new Event('${key}'))`
         file.element = el
       }
