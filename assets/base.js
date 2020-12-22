@@ -129,18 +129,37 @@ window.onload = async function () {
       })
 
     component.querySelectorAll('div[data-base-component]')
-      .forEach(
-        component => parseComponent(component.getAttribute('data-base-component'))
-          .then(({ component: rendered }) => component.parentNode.replaceChild(rendered, component))
-      )
+      .forEach(async nested => {
+        const { component: rendered, componentKey: renderedKey } = await parseComponent(nested.getAttribute('data-base-component'))
+
+        const re = /^data-base-event-([a-z-]+[a-z])$/
+        const events = [...nested.attributes]
+          .map(({ name }) => name)
+          .filter(name => re.test(name))
+
+        events.forEach(attr => {
+          const eventNamePascal = _dashSplitToPascal(re.exec(attr)[1])
+          const localNamePascal = _dashSplitToPascal(nested.getAttribute(attr))
+          const localName = 'on' + localNamePascal
+
+          const renderedInjections = globalInjections.get(renderedKey)
+          if (!Object.prototype.hasOwnProperty.call(renderedInjections, 'events')) {
+            renderedInjections.events = {}
+          }
+
+          renderedInjections.events['dispatch' + eventNamePascal] = (detail) => {
+            component.dispatchEvent(
+              new CustomEvent(localName, { detail })
+            )
+          }
+        })
+
+        nested.parentNode.replaceChild(rendered, nested)
+      })
 
     component.querySelectorAll('[data-base-content]')
       .forEach(content => {
-        const name = content.getAttribute('data-base-content')
-          .toLowerCase()
-          .split('-')
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-          .join('')
+        const name = _dashSplitToPascal(content.getAttribute('data-base-content'))
 
         const injections = {
           ...globalInjections.get(componentKey),
@@ -148,6 +167,25 @@ window.onload = async function () {
         }
 
         globalInjections.set(componentKey, injections)
+      })
+
+    component.querySelectorAll('input[data-base-model]')
+      .forEach(model => {
+        const attr = model.getAttribute('data-base-model')
+        const name = 'model' + _dashSplitToPascal(attr)
+        const injections = globalInjections.get(componentKey)
+
+        if (Object.prototype.hasOwnProperty.call(injections, name)) {
+          throw new Error(`Duplicate model '${attr}'`)
+        }
+
+        globalInjections.set(componentKey, {
+          ...injections,
+          [name]: (cb) => {
+            const handler = (event) => cb(event.target ? event.target.value : event)
+            model.oninput = handler
+          }
+        })
       })
 
     return { component, componentKey }
@@ -163,5 +201,13 @@ window.onload = async function () {
     app.append(...component.children)
     app.setAttribute('data-base-current-page', name)
     app.setAttribute('data-base-component-key', componentKey)
+  }
+
+  // Helper functions
+  function _dashSplitToPascal (str) {
+    return str.toLowerCase()
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join('')
   }
 }
