@@ -19,6 +19,7 @@ window.onload = async function () {
   let scriptsCounter = 0
 
   const globalComponents = new Map()
+  const globalInjections = new Map()
 
   if (!session.user) {
     renderPage('login')
@@ -64,6 +65,7 @@ window.onload = async function () {
 
     const componentKey = `${_name}--${componentsCounter++}`
     globalComponents.set(componentKey, null)
+    globalInjections.set(componentKey, {})
 
     const componentData = await fetchComponent(name, isPage)
 
@@ -98,7 +100,7 @@ window.onload = async function () {
           await Promise.resolve() // Make sure page is rendered before executing
           const self = document.querySelector(`[data-base-component-key="${componentKey}"]`)
           self.removeChild(document.getElementById(key))
-          return script({ self })
+          return script({ self, ...globalInjections.get(componentKey) })
         })
 
         const el = document.createElement('script')
@@ -131,6 +133,22 @@ window.onload = async function () {
         component => parseComponent(component.getAttribute('data-base-component'))
           .then(({ component: rendered }) => component.parentNode.replaceChild(rendered, component))
       )
+
+    component.querySelectorAll('[data-base-content]')
+      .forEach(content => {
+        const name = content.getAttribute('data-base-content')
+          .toLowerCase()
+          .split('-')
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+          .join('')
+
+        const injections = {
+          ...globalInjections.get(componentKey),
+          [`set${name}`]: (data) => { content.innerText = data }
+        }
+
+        globalInjections.set(componentKey, injections)
+      })
 
     return { component, componentKey }
   }
