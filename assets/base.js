@@ -18,8 +18,7 @@ window.onload = async function () {
   let componentsCounter = 0
   let scriptsCounter = 0
 
-  window.COMPONENTS = new Map()
-  window.SCRIPTS = new Map()
+  const globalComponents = new Map()
 
   if (!session.user) {
     renderPage('login')
@@ -64,7 +63,7 @@ window.onload = async function () {
     const componentMeta = componentsAssets.get(_name)
 
     const componentKey = `${_name}--${componentsCounter++}`
-    window.COMPONENTS.set(componentKey, null)
+    globalComponents.set(componentKey, null)
 
     const componentData = await fetchComponent(name, isPage)
 
@@ -94,9 +93,14 @@ window.onload = async function () {
 
         const key = `${componentKey}-${scriptsCounter++}`
 
-        window.SCRIPTS.set(key, script)
+        document.addEventListener(key, function handler () {
+          document.removeEventListener(key, handler)
+          const self = document.querySelector(`[data-base-component-key="${componentKey}"]`)
+          return script({ self })
+        })
+
         const el = document.createElement('script')
-        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.querySelector('[data-base-component-key="${componentKey}"]'))`
+        el.innerText = `document.dispatchEvent(new Event('${key}'))`
         file.element = el
       }
     })
@@ -108,7 +112,7 @@ window.onload = async function () {
     const component = document.createElement('div')
     component.setAttribute('data-base-component-key', componentKey)
     component.setAttribute('class', `component component--${name}`)
-    window.COMPONENTS.set(componentKey, component)
+    globalComponents.set(componentKey, component)
 
     componentData
       .forEach(file => {
