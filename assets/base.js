@@ -18,8 +18,8 @@ window.onload = async function () {
   let componentsCounter = 0
   let scriptsCounter = 0
 
-  window.COMPONENTS = new Map()
-  window.SCRIPTS = new Map()
+  const globalComponents = new Map()
+  const globalInjections = new Map()
 
   if (!session.user) {
     renderPage('login')
@@ -64,7 +64,8 @@ window.onload = async function () {
     const componentMeta = componentsAssets.get(_name)
 
     const componentKey = `${_name}--${componentsCounter++}`
-    window.COMPONENTS.set(componentKey, null)
+    globalComponents.set(componentKey, null)
+    globalInjections.set(componentKey, {})
 
     const componentData = await fetchComponent(name, isPage)
 
@@ -83,7 +84,7 @@ window.onload = async function () {
         file.html = html
       } else if (/text\/css/.test(contentType)) {
         const el = document.createElement('style')
-        el.innerText = file.data.split('#{SELF}').join(`[data-component-key="${componentKey}"]`)
+        el.innerText = file.data.split('#{SELF}').join(`[data-base-component-key="${componentKey}"]`)
         file.element = el
       } else if (/application\/javascript/.test(contentType)) {
         /* eslint-disable-next-line no-eval */
@@ -94,9 +95,17 @@ window.onload = async function () {
 
         const key = `${componentKey}-${scriptsCounter++}`
 
-        window.SCRIPTS.set(key, script)
+        document.addEventListener(key, async function handler () {
+          document.removeEventListener(key, handler)
+          await Promise.resolve() // Make sure page is rendered before executing
+          const self = document.querySelector(`[data-base-component-key="${componentKey}"]`)
+          self.removeChild(document.getElementById(key))
+          return script({ self, ...globalInjections.get(componentKey) })
+        })
+
         const el = document.createElement('script')
-        el.innerText = `window.SCRIPTS.get('${key}').call(null, document.querySelector('[data-component-key="${componentKey}"]'))`
+        el.setAttribute('id', key)
+        el.innerText = `document.dispatchEvent(new Event('${key}'))`
         file.element = el
       }
     })
@@ -106,9 +115,9 @@ window.onload = async function () {
     }
 
     const component = document.createElement('div')
-    component.setAttribute('data-component-key', componentKey)
+    component.setAttribute('data-base-component-key', componentKey)
     component.setAttribute('class', `component component--${name}`)
-    window.COMPONENTS.set(componentKey, component)
+    globalComponents.set(componentKey, component)
 
     componentData
       .forEach(file => {
@@ -119,11 +128,65 @@ window.onload = async function () {
         }
       })
 
-    component.querySelectorAll('div[data-component]')
-      .forEach(
-        component => parseComponent(component.getAttribute('data-component'))
-          .then(({ component: rendered }) => component.parentNode.replaceChild(rendered, component))
-      )
+    component.querySelectorAll('div[data-base-component]')
+      .forEach(async nested => {
+        const { component: rendered, componentKey: renderedKey } = await parseComponent(nested.getAttribute('data-base-component'))
+
+        const re = /^data-base-event-([a-z-]+[a-z])$/
+        const events = [...nested.attributes]
+          .map(({ name }) => name)
+          .filter(name => re.test(name))
+
+        events.forEach(attr => {
+          const eventNamePascal = _dashSplitToPascal(re.exec(attr)[1])
+          const localNamePascal = _dashSplitToPascal(nested.getAttribute(attr))
+          const localName = 'on' + localNamePascal
+
+          const renderedInjections = globalInjections.get(renderedKey)
+          if (!Object.prototype.hasOwnProperty.call(renderedInjections, 'events')) {
+            renderedInjections.events = {}
+          }
+
+          renderedInjections.events['dispatch' + eventNamePascal] = (detail) => {
+            component.dispatchEvent(
+              new CustomEvent(localName, { detail })
+            )
+          }
+        })
+
+        nested.parentNode.replaceChild(rendered, nested)
+      })
+
+    component.querySelectorAll('[data-base-content]')
+      .forEach(content => {
+        const name = _dashSplitToPascal(content.getAttribute('data-base-content'))
+
+        const injections = {
+          ...globalInjections.get(componentKey),
+          [`set${name}`]: (data) => { content.innerText = data }
+        }
+
+        globalInjections.set(componentKey, injections)
+      })
+
+    component.querySelectorAll('input[data-base-model]')
+      .forEach(model => {
+        const attr = model.getAttribute('data-base-model')
+        const name = 'model' + _dashSplitToPascal(attr)
+        const injections = globalInjections.get(componentKey)
+
+        if (Object.prototype.hasOwnProperty.call(injections, name)) {
+          throw new Error(`Duplicate model '${attr}'`)
+        }
+
+        globalInjections.set(componentKey, {
+          ...injections,
+          [name]: (cb) => {
+            const handler = (event) => cb(event.target ? event.target.value : event)
+            model.oninput = handler
+          }
+        })
+      })
 
     return { component, componentKey }
   }
@@ -136,7 +199,15 @@ window.onload = async function () {
     }
 
     app.append(...component.children)
-    app.setAttribute('data-current-page', name)
-    app.setAttribute('data-component-key', componentKey)
+    app.setAttribute('data-base-current-page', name)
+    app.setAttribute('data-base-component-key', componentKey)
+  }
+
+  // Helper functions
+  function _dashSplitToPascal (str) {
+    return str.toLowerCase()
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join('')
   }
 }

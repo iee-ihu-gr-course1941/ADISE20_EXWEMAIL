@@ -2,7 +2,12 @@
   "components": {
     "_url": "assets/components/",
     "login-form": [
-      "login-form.html"
+      "login-form.html",
+      "login-form.js"
+    ],
+    "test-input": [
+      "test-input.html",
+      "test-input.js"
     ],
     "test": [
       "test.html",

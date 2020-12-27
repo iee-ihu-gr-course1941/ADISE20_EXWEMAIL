@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "chenxsan.vscode-standardjs",
+    "eamodio.gitlens",
+    "EditorConfig.EditorConfig",
+    "Gruntfuggly.todo-tree",
+    "maptz.regionfolder",
+    "ms-vscode-remote.remote-ssh",
+    "shevaua.phpcs",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-greek"
+  ]
+}

@@ -1,4 +1,4 @@
 /* eslint-disable-next-line no-unused-expressions */
-(self) => {
+({ self }) => {
   console.log('hello')
 }

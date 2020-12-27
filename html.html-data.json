@@ -1,0 +1,11 @@
+{
+  "version": 1.1,
+  "globalAttributes": [
+    { "name": "data-base-component" },
+    { "name": "data-base-content" },
+    { "name": "data-base-event" },
+    { "name": "data-base-model" },
+    { "name": "data-base-page" },
+    { "name": "data-base-prop" }
+  ]
+}

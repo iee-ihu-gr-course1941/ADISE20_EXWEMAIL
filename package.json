@@ -4,6 +4,7 @@
   },
   "standard": {
     "globals": [
+      "CustomEvent",
       "fetch",
       "HTMLDivElement"
     ]
