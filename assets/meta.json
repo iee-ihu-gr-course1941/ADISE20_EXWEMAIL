@@ -2,8 +2,17 @@
   "components": {
     "_url": "assets/components/",
     "login-form": [
+      "login-form.css",
       "login-form.html",
       "login-form.js"
+    ],
+    "login-form-login": [
+      "login-form-login.html",
+      "login-form-login.js"
+    ],
+    "login-form-register": [
+      "login-form-register.html",
+      "login-form-register.js"
     ],
     "test-input": [
       "test-input.html",

@@ -1,0 +1,46 @@
+#SELF {
+  font-family: sans-serif;
+  padding-top: 10rem;
+}
+
+#SELF > .component-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media screen and (max-width: 900px) {
+  #SELF > .component-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+#SELF > .component-body > .half {
+  display: flex;
+  flex-flow: column;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid black;
+}
+
+#SELF > .component-body > .half .component {
+  flex: 1 1 auto;
+}
+
+#SELF > .component-body > .half .component > .component-body,
+#SELF > .component-body > .half .component > .component-body > form {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-flow: column;
+}
+
+#SELF form input[type="submit"] {
+  margin-top: auto;
+  align-self: start;
+}
+
+#SELF form input:not([type="submit"]) {
+  width: 60%;
+  max-width: 16rem;
+  float: right;
+}
