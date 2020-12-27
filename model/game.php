@@ -104,6 +104,8 @@ class Game implements \JsonSerializable
 
         $this->id = $gameId;
         $stmt->close();
+
+        return $gameId;
     }
 
     public function leave()
@@ -201,26 +203,13 @@ class Game implements \JsonSerializable
         }
 
         foreach ($playersGroupedByUser as $playerGroup) {
-            // TODO: Implement in new model Class, Player
+            // EGINE XD
             if (count($playerGroup) === 0) {
                 continue;
             }
 
-            $player = [];
-            $player['id'] = $playerGroup[0]['playerId'];
-            $player['game'] = $playerGroup[0]['id'];
-            $player['userId'] = $playerGroup[0]['userId'];
-            $player['username'] = $playerGroup[0]['username'];
-
-            $player['state'] = [];
-            foreach ($group as $playerRow) {
-                if ($playerRow['pstate_field'] == null) {
-                    continue;
-                }
-                $field = constant($playerRow['pstate_field']);
-                $player['state'][$field] = $playerRow['pstate_value'];
-            }
-
+            $player = new Player();
+            $player->fromPlayerGroup($playerGroup);
             $this->players[] = $player;
         }
     }
