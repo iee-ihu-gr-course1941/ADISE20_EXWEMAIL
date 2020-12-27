@@ -84,7 +84,7 @@ window.onload = async function () {
         file.html = html
       } else if (/text\/css/.test(contentType)) {
         const el = document.createElement('style')
-        el.innerText = file.data.split('#{SELF}').join(`[data-base-component-key="${componentKey}"]`)
+        el.innerText = file.data.split('#SELF').join(`[data-base-component-key="${componentKey}"]`)
         file.element = el
       } else if (/application\/javascript/.test(contentType)) {
         /* eslint-disable-next-line no-eval */

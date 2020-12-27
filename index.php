@@ -20,6 +20,7 @@ $assetMeta = json_decode($assetMeta);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="session" content="<?php echo htmlspecialchars(json_encode($_SESSION)); ?>">
     <meta name="assets" content="<?php echo htmlspecialchars(json_encode($assetMeta)); ?>">
+    <link rel="stylesheet" href="assets/global-styles.css">
     <title>DominoZ</title>
 </head>
 
