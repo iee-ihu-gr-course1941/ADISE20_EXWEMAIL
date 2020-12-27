@@ -199,11 +199,10 @@ class Game implements \JsonSerializable
 
         $playersGroupedByUser = [];
         foreach ($group as $player) {
-            $playersGroupedByUser[$player['user']][] = $player;
+            $playersGroupedByUser[$player['userId']][] = $player;
         }
 
         foreach ($playersGroupedByUser as $playerGroup) {
-            // EGINE XD
             if (count($playerGroup) === 0) {
                 continue;
             }
