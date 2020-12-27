@@ -13,7 +13,8 @@ return (function () {
     Session::initialize();
 
     $game = new Game();
-    $id = $game->create();
+    $gameId = $_POST['game-id'];
+    $id = $game->join($gameId);
 
     header('Content-Type: application/json');
     echo $id;

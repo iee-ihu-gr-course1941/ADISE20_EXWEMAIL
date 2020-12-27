@@ -88,8 +88,24 @@ class Game implements \JsonSerializable
         return $this->id;
     }
 
-    public function join()
+    public function join($gameId)
     {
+        $userId = $this->user->toArray()['id'];
+        $sql = 'INSERT INTO players (user, game) VALUES (?, ?)';
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            die('Insertion failed: ' . $this->db->error);
+        }
+
+        $stmt->bind_param('ii', $userId, $gameId);
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+
+        $this->id = $gameId;
+        $stmt->close();
+
+        return $gameId;
     }
 
     public function leave()
@@ -183,30 +199,16 @@ class Game implements \JsonSerializable
 
         $playersGroupedByUser = [];
         foreach ($group as $player) {
-            $playersGroupedByUser[$player['user']][] = $player;
+            $playersGroupedByUser[$player['userId']][] = $player;
         }
 
         foreach ($playersGroupedByUser as $playerGroup) {
-            // TODO: Implement in new model Class, Player
             if (count($playerGroup) === 0) {
                 continue;
             }
 
-            $player = [];
-            $player['id'] = $playerGroup[0]['playerId'];
-            $player['game'] = $playerGroup[0]['id'];
-            $player['userId'] = $playerGroup[0]['userId'];
-            $player['username'] = $playerGroup[0]['username'];
-
-            $player['state'] = [];
-            foreach ($group as $playerRow) {
-                if ($playerRow['pstate_field'] == null) {
-                    continue;
-                }
-                $field = constant($playerRow['pstate_field']);
-                $player['state'][$field] = $playerRow['pstate_value'];
-            }
-
+            $player = new Player();
+            $player->fromPlayerGroup($playerGroup);
             $this->players[] = $player;
         }
     }
