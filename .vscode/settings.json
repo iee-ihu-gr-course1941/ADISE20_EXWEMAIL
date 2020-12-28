@@ -1,6 +1,5 @@
 {
-  "php.executablePath": "/usr/bin/php7.2",
-  "phpcs.executablePath": "/usr/local/bin/phpcs",
+  "phpcs.executablePath": "/usr/local/composer/phpcs",
   "html.customData": [
     "./html.html-data.json"
   ]
