@@ -23,6 +23,10 @@ class Game implements \JsonSerializable
 
     public function create()
     {
+        if (isset($_SESSION['player'])) {
+            die('Already in game');
+        }
+
         $status = 0;
         $userId = $this->user->toArray()['id'];
         $sql = 'SELECT id FROM enums WHERE name = "GAME_STATUS_WAITING_PLAYERS"';
@@ -62,6 +66,20 @@ class Game implements \JsonSerializable
         $playerId = $stmt->insert_id;
         $stmt->close();
 
+        $sql = 'SELECT id, game, user FROM players WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $playerId);
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+        $result = $stmt->get_result();
+
+        if (!$result) {
+            die('Selection of player failed');
+        }
+
+        $_SESSION['player'] = $result->fetch_assoc();
+
         $field = 0;
         $userId = $this->user->toArray()['id'];
         $sql = 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_HOST"';
@@ -90,6 +108,10 @@ class Game implements \JsonSerializable
 
     public function join($gameId)
     {
+        if (isset($_SESSION['player'])) {
+            die('Already in game');
+        }
+
         $userId = $this->user->toArray()['id'];
         $sql = 'INSERT INTO players (user, game) VALUES (?, ?)';
         $stmt = $this->db->prepare($sql);
@@ -103,7 +125,22 @@ class Game implements \JsonSerializable
         }
 
         $this->id = $gameId;
+        $playerId = $stmt->insert_id;
         $stmt->close();
+
+        $sql = 'SELECT id, game, user FROM players WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $playerId);
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+        $result = $stmt->get_result();
+
+        if (!$result) {
+            die('Selection of player failed');
+        }
+
+        $_SESSION['player'] = $result->fetch_assoc();
 
         return $gameId;
     }
