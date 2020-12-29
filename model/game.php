@@ -19,6 +19,9 @@ class Game implements \JsonSerializable
             die('Not logged in');
         }
         $this->user = new User();
+        if (isset($_SESSION['player'])) {
+            $this->id = $_SESSION['player']['game'];
+        }
     }
 
     public function create()
@@ -147,6 +150,136 @@ class Game implements \JsonSerializable
 
     public function leave()
     {
+        if (!isset($_SESSION['player'])) {
+            die('Not in a game');
+        }
+
+        $playerId = $_SESSION['player']['id'];
+
+        $sql = 'DELETE FROM players WHERE id = ? LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $playerId);
+
+        if (!$stmt->execute()) {
+            die('Player deletion failed: ' . $stmt->error);
+        }
+
+        $result = $stmt->affected_rows;
+        $stmt->close();
+
+        $sql = 'DELETE FROM player_state WHERE player = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $_SESSION['player']);
+
+        if (!$stmt->execute()) {
+            die('Player state deletion failed: ' . $stmt->error);
+        }
+
+        $stmt->close();
+
+        unset($_SESSION['player']);
+
+        $sql = "SELECT value
+            FROM game_state
+            WHERE game = ?
+                AND field = (SELECT id FROM enums WHERE name = 'GSTATE_FIELD_HOST')";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $this->id);
+        $gameHost = 0;
+
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+
+        $stmt->bind_result($gameHost);
+        $stmt->store_result();
+        $stmt->fetch();
+        $stmt->close();
+
+        $players = 0;
+        $sql = 'SELECT COUNT(id) FROM players WHERE game = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $this->id);
+
+        if (!$stmt->execute()) {
+            die('Insertion failed: ' . $stmt->error);
+        }
+
+        $stmt->bind_result($players);
+        $stmt->store_result();
+        $stmt->fetch();
+        $stmt->close();
+
+
+        if (!$players) {
+            $status = 0;
+            $sql = 'SELECT id FROM enums WHERE name = "GAME_STATUS_ENDED"';
+            $stmt = $this->db->prepare($sql);
+
+            if (!$stmt->execute()) {
+                die('Insertion failed: ' . $stmt->error);
+            }
+
+            $stmt->bind_result($status);
+            $stmt->store_result();
+            $stmt->fetch();
+            $stmt->close();
+
+            $sql = 'UPDATE games SET status = ? WHERE id = ?';
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param('ii', $status, $this->id);
+
+            if (!$stmt->execute()) {
+                die('Game status change failed: ' . $stmt->error);
+            }
+
+            $stmt->close();
+        } elseif ((int)$gameHost === $playerId) {
+            $field = 0;
+
+            $sql = 'SELECT id FROM players WHERE game = ? LIMIT 1';
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                die('Selection of player failed: ' . $this->db->error);
+            }
+            $stmt->bind_param('i', $this->id);
+
+            if (!$stmt->execute()) {
+                die('Could not set another player as host: ' . $stmt->error);
+            }
+
+            $stmt->bind_result($playerId);
+            $stmt->store_result();
+            $stmt->fetch();
+            $stmt->close();
+
+            $sql = 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_HOST"';
+            $stmt = $this->db->prepare($sql);
+
+            if (!$stmt->execute()) {
+                die('Insertion failed: ' . $stmt->error);
+            }
+
+            $stmt->bind_result($field);
+            $stmt->store_result();
+            $stmt->fetch();
+            $stmt->close();
+
+            $sql = 'UPDATE game_state SET field = ?, value = ? WHERE game = ?';
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) {
+                die('Insertion failed: ' . $this->db->error);
+            }
+
+            $stmt->bind_param('iii', $field, $playerId, $this->id);
+            if (!$stmt->execute()) {
+                die('Insertion failed: ' . $stmt->error);
+            }
+
+            $stmt->close();
+        }
+
+        return $result;
     }
 
     public function getList()
