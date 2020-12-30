@@ -96,6 +96,7 @@ function db_statement($db, $params)
 function error_response($message, $status = 501, $details = null)
 {
     header('Content-Type: application/json');
+    http_response_code($status);
     die(json_encode([
         'status' => $status,
         'message' => $message,
