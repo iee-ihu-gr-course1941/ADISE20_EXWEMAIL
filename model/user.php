@@ -8,7 +8,7 @@ class User
 
     public function __construct()
     {
-        $this->db = require(dirname(__FILE__) . '/../database/db.php');
+        $this->db = db();
 
         if (isset($_SESSION['user'])) {
             $user = $_SESSION['user'];

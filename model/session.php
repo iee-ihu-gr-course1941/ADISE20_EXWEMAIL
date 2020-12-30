@@ -8,7 +8,9 @@ class Session implements SessionHandlerInterface
 
     public function open($savePath, $sessionName)
     {
-        $this->db = require(dirname(__FILE__) . '/../database/db.php');
+        require_once(dirname(__FILE__) . '/../includes.php');
+
+        $this->db = db();
         return true;
     }
 
