@@ -17,7 +17,7 @@ class Game implements \JsonSerializable
         $this->db = db();
 
         if (!isset($_SESSION['user'])) {
-            die('Not logged in');
+            error_response('Not logged in', 401);
         }
         $this->user = new User();
 
@@ -29,84 +29,58 @@ class Game implements \JsonSerializable
     public function create()
     {
         if (isset($_SESSION['player'])) {
-            die('Already in game');
+            error_response('Already in game', 400);
         }
 
         $status = 0;
-        $userId = $this->user->toArray()['id'];
-        $sql = 'SELECT id FROM enums WHERE name = "GAME_STATUS_WAITING_PLAYERS"';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        $stmt->bind_result($status);
-        $stmt->store_result();
-        $stmt->fetch();
-        $stmt->close();
-
-        $sql = 'INSERT INTO games (code, status) VALUES (?, ?)';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Insertion failed: ' . $this->db->error);
-        }
+        db_statement($this->db, [
+            'sql' => 'SELECT id FROM enums WHERE name = "GAME_STATUS_WAITING_PLAYERS"',
+            'bind_result' => [&$status]
+        ]);
 
         $this->code = $this->generateRandomString();
-        $stmt->bind_param('si', $this->code, $status);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
+        $this->id = db_statement($this->db, [
+            'sql' => 'INSERT INTO games (code, status) VALUES (?, ?)',
+            'bind_param' => ['si', $this->code, $status],
+            'return' => 'insert_id',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
 
-        $this->id = $stmt->insert_id;
-        $stmt->close();
+        $userId = $this->user->toArray()['id'];
+        $playerId = db_statement($this->db, [
+            'sql' => 'INSERT INTO players (user, game) VALUES (?, ?)',
+            'bind_param' => ['ii', $userId, $this->id],
+            'return' => 'insert_id',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
 
-        $sql = 'INSERT INTO players (user, game) VALUES (?, ?)';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Insertion failed: ' . $this->db->error);
-        }
-
-        $stmt->bind_param('ii', $userId, $this->id);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-
-        $playerId = $stmt->insert_id;
-        $stmt->close();
-
-        $sql = 'SELECT id, game, user FROM players WHERE id = ?';
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param('i', $playerId);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-        $result = $stmt->get_result();
-
-        if (!$result) {
-            die('Selection of player failed');
-        }
-
-        $_SESSION['player'] = $result->fetch_assoc();
+        $_SESSION['player'] = db_statement($this->db, [
+            'sql' => 'SELECT id, game, user FROM players WHERE id = ?',
+            'bind_param' => ['i', $playerId],
+            'return' => 'result',
+            'error' => 'Could not load players',
+            'status' => 500
+        ]);
 
         $field = 0;
-        $userId = $this->user->toArray()['id'];
-        $sql = 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_HOST"';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        $stmt->bind_result($field);
-        $stmt->store_result();
-        $stmt->fetch();
-        $stmt->close();
+        db_statement($this->db, [
+            'sql' => 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_HOST"',
+            'bind_result' => [&$field]
+        ]);
 
-        $sql = 'INSERT INTO game_state (game, field, value) VALUES (?, ?, ?)';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Insertion failed: ' . $this->db->error);
+        $rows = db_statement($this->db, [
+            'sql' => 'INSERT INTO game_state (game, field, value) VALUES (?, ?, ?)',
+            'bind_param' => ['iii', $this->id, $field, $playerId],
+            'return' => 'affected_rows',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
+        if ($rows !== 1) {
+            error_response('Insertion failed', 501);
         }
-
-        $stmt->bind_param('iii', $this->id, $field, $playerId);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-
-        $stmt->close();
 
         return $this->id;
     }

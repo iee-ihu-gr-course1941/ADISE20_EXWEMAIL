@@ -33,10 +33,74 @@ function db()
     $conn = new mysqli($serverName, $username, $password, $name);
 
     if ($conn->connect_error) {
-        die('Connection failed: ' . $conn->connect_error);
+        error_response('Connection failed', 501, $conn->connect_error);
     }
 
     return $conn;
+}
+
+function db_statement($db, $params)
+{
+    if (!isset($params['sql'])) {
+        error_response('No query');
+    }
+
+    $message = 'SQL error';
+    if (isset($params['error'])) {
+        $message = $params['error'];
+    }
+
+    $status = 501;
+    if (isset($params['status'])) {
+        $status = $params['status'];
+    }
+
+    $stmt = $db->prepare($params['sql']);
+    if (!$stmt) {
+        error_response($message, $status, $db->error);
+    }
+
+    if (isset($params['bind_param'])) {
+        $stmt->bind_param(...$params['bind_param']);
+    }
+
+    if (!$stmt->execute()) {
+        error_response($message, $status, $stmt->error);
+    }
+
+    if (isset($params['bind_result'])) {
+        $stmt->bind_result(...$params['bind_result']);
+        $stmt->store_result();
+        $stmt->fetch();
+        $stmt->close();
+    }
+
+    if (isset($params['return'])) {
+        if ($params['return'] === 'result') {
+            $result = $stmt->get_result();
+            if (!$result) {
+                error_response($message, $status, $db->error);
+            }
+            $result = $result->fetch_assoc();
+        } else {
+            $result = $stmt->{$params['return']};
+        }
+
+        $stmt->close();
+        return $result;
+    }
+
+    return $stmt;
+}
+
+function error_response($message, $status = 501, $details = null)
+{
+    header('Content-Type: application/json');
+    die(json_encode([
+        'status' => $status,
+        'message' => $message,
+        'details' => $details
+    ]));
 }
 
 model\Session::initialize();
