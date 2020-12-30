@@ -88,38 +88,26 @@ class Game implements \JsonSerializable
     public function join($gameId)
     {
         if (isset($_SESSION['player'])) {
-            die('Already in game');
+            error_response('Already in game', 400);
         }
 
         $userId = $this->user->toArray()['id'];
-        $sql = 'INSERT INTO players (user, game) VALUES (?, ?)';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Insertion failed: ' . $this->db->error);
-        }
-
-        $stmt->bind_param('ii', $userId, $gameId);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-
+        $playerId = db_statement($this->db, [
+            'sql' => 'INSERT INTO players (user, game) VALUES (?, ?)',
+            'bind_param' => ['ii', $userId, $gameId],
+            'return' => 'insert_id',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
         $this->id = $gameId;
-        $playerId = $stmt->insert_id;
-        $stmt->close();
 
-        $sql = 'SELECT id, game, user FROM players WHERE id = ?';
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param('i', $playerId);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-        $result = $stmt->get_result();
-
-        if (!$result) {
-            die('Selection of player failed');
-        }
-
-        $_SESSION['player'] = $result->fetch_assoc();
+        $_SESSION['player'] = db_statement($this->db, [
+            'sql' => 'SELECT id, game, user FROM players WHERE id = ?',
+            'bind_param' => ['i', $playerId],
+            'return' => 'result',
+            'error' => 'Could not load players',
+            'status' => 500
+        ]);
 
         return $gameId;
     }
