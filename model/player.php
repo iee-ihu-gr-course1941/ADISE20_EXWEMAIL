@@ -13,9 +13,9 @@ class Player implements \JsonSerializable
 
     public function __construct()
     {
-        include dirname(__FILE__) . '/../enums.php';
+        require_once(dirname(__FILE__) . '/../includes.php');
 
-        $this->db = require(dirname(__FILE__) . '/../database/db.php');
+        $this->db = db();
         if (!isset($_SESSION['user'])) {
             die('Not logged in');
         }

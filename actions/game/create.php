@@ -1,16 +1,9 @@
 <?php
 
-use model\Session;
-use model\User;
 use model\Game;
 
 return (function () {
-    include dirname(__FILE__) . '/../../model/session.php';
-    include dirname(__FILE__) . '/../../model/user.php';
-    include dirname(__FILE__) . '/../../model/game.php';
-    include dirname(__FILE__) . '/../../model/player.php';
-
-    Session::initialize();
+    require_once(dirname(__FILE__) . '/../../includes.php');
 
     $game = new Game();
     $id = $game->create();
