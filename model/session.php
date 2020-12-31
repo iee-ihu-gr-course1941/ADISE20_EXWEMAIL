@@ -22,53 +22,38 @@ class Session implements SessionHandlerInterface
 
     public function read($sid)
     {
-        $sql = 'SELECT * FROM sessions WHERE sid = ?';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Session failed: ' . $this->db->error);
-        }
+        $session = db_statement($this->db, [
+            'sql' => 'SELECT * FROM sessions WHERE sid = ?',
+            'bind_param' => ['s', $sid],
+            'return' => 'result',
+            'error' => 'Session failed',
+            'status' => 500
+        ]);
 
-        $stmt->bind_param('s', $sid);
-        if (!$stmt->execute()) {
-            return [];
-        }
-
-        $result = $stmt->get_result();
-        $session = $result->fetch_assoc();
-        $data = json_decode($session['data']);
-
-        return $data;
+        return json_decode($session['data']);
     }
 
     public function write($sid, $data)
     {
-        $sql = 'INSERT INTO sessions (sid, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Session failed: ' . $this->db->error);
-        }
-
         $json = json_encode($data);
-        $stmt->bind_param('sss', $sid, $json, $json);
-        if (!$stmt->execute()) {
-            die('Session failed: ' . $this->db->error);
-        }
+        db_statement($this->db, [
+            'sql' => 'INSERT INTO sessions (sid, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?',
+            'bind_param' => ['sss', $sid, $json, $json],
+            'error' => 'Session failed',
+            'status' => 500
+        ]);
 
         return true;
     }
 
     public function destroy($sid)
     {
-        $sql = 'DELETE FROM sessions WHERE sid = ?';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Session failed: ' . $this->db->error);
-        }
-
-        $stmt->bind_param('s', $sid);
-        if ($stmt->execute()) {
-            die('Session failed: ' . $this->db->error);
-        }
+        db_statement($this->db, [
+            'sql' => 'DELETE FROM sessions WHERE sid = ?',
+            'bind_param' => ['s', $sid],
+            'error' => 'Session failed',
+            'status' => 500
+        ]);
 
         return true;
     }
