@@ -46,7 +46,31 @@ class User
 
         $this->loadData($user);
 
+        $stmt = db_statement($this->db, [
+            'sql' => "SELECT
+                    players.id,
+                    players.game,
+                    players.user
+                FROM players
+                JOIN  games
+                    ON games.id = players.game
+                JOIN enums AS status
+                    ON status.id = games.status
+                WHERE players.user = ? AND (
+                    status.name = 'GAME_STATUS_WAITING_PLAYERS'
+                    OR status.name = 'GAME_STATUS_RUNNING'
+                )",
+            'bind_param' => ['i', $this->id],
+            'error' => 'Could not load player',
+            'status' => 500
+        ]);
+
         $_SESSION['user'] = $this->toArray();
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $_SESSION['player'] = $result->fetch_assoc();
+        }
 
         return $this->id;
     }
