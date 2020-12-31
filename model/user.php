@@ -22,16 +22,12 @@ class User
             die('User logged in');
         }
 
-        $sql = 'SELECT id, username, password FROM users WHERE username = ?';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Login failed: ' . $this->db->error);
-        }
-
-        $stmt->bind_param('s', $username);
-        if (!$stmt->execute()) {
-            die('Login failed: ' . $stmt->error);
-        }
+        $stmt = db_statement($this->db, [
+            'sql' => 'SELECT id, username, password FROM users WHERE username = ?',
+            'bind_param' => ['s', $username],
+            'error' => 'Login failed',
+            'status' => 500
+        ]);
 
         $result = $stmt->get_result();
         if (!$result) {
@@ -65,18 +61,14 @@ class User
         $hash = password_hash($password, PASSWORD_BCRYPT);
         unset($password);
 
-        $sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) {
-            die('Insertion failed: ' . $this->db->error);
-        }
+        $this->id = db_statement($this->db, [
+            'sql' => 'INSERT INTO users (username, password) VALUES (?, ?)',
+            'bind_param' => ['ss', $this->username, $hash],
+            'return' => 'insert_id',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
 
-        $stmt->bind_param('ss', $this->username, $hash);
-        if (!$stmt->execute()) {
-            die('Insertion failed: ' . $stmt->error);
-        }
-
-        $this->id = $stmt->insert_id;
         return $this->id;
     }
 
