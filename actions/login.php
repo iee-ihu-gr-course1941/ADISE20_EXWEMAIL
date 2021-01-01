@@ -12,5 +12,5 @@ return (function () {
     $user->login($username, $password);
 
     header('Content-Type: application/json');
-    echo json_encode($user->toArray());
+    echo json_encode($user);
 })();
