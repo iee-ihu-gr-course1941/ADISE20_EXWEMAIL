@@ -22,6 +22,33 @@ class Player implements \JsonSerializable
         $this->user = new User();
     }
 
+    public function setupSession()
+    {
+        $stmt = db_statement($this->db, [
+            'sql' => "SELECT
+                    players.id,
+                    players.game,
+                    players.user
+                FROM players
+                JOIN  games
+                    ON games.id = players.game
+                JOIN enums AS status
+                    ON status.id = games.status
+                WHERE players.user = ? AND (
+                    status.name = 'GAME_STATUS_WAITING_PLAYERS'
+                    OR status.name = 'GAME_STATUS_RUNNING'
+                )",
+            'bind_param' => ['i', $this->user->getId()],
+            'error' => 'Could not load player',
+            'status' => 500
+        ]);
+
+        $result = $stmt->get_result();
+        if ($result) {
+            $_SESSION['player'] = $result->fetch_assoc();
+        }
+    }
+
     public function fromPlayerGroup($group)
     {
         $this->id = $group[0]['playerId'];
