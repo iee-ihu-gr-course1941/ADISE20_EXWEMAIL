@@ -56,13 +56,8 @@ class Game implements \JsonSerializable
             'status' => 500
         ]);
 
-        $_SESSION['player'] = db_statement($this->db, [
-            'sql' => 'SELECT id, game, user FROM players WHERE id = ?',
-            'bind_param' => ['i', $playerId],
-            'return' => 'result',
-            'error' => 'Could not load players',
-            'status' => 500
-        ]);
+        $player = new Player();
+        $player->setupSession();
 
         $field = 0;
         db_statement($this->db, [
@@ -101,13 +96,8 @@ class Game implements \JsonSerializable
         ]);
         $this->id = $gameId;
 
-        $_SESSION['player'] = db_statement($this->db, [
-            'sql' => 'SELECT id, game, user FROM players WHERE id = ?',
-            'bind_param' => ['i', $playerId],
-            'return' => 'result',
-            'error' => 'Could not load players',
-            'status' => 500
-        ]);
+        $player = new Player();
+        $player->setupSession();
 
         return $gameId;
     }
