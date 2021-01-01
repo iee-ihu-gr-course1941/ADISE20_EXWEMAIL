@@ -95,7 +95,7 @@ class Game implements \JsonSerializable
         $gameStatus = 0;
         db_statement($this->db, [
             'sql' => 'SELECT status FROM games WHERE id = ?',
-            'bind_param' => ['i', $this->id],
+            'bind_param' => ['i', $gameId],
             'bind_result' => [&$gameStatus]
         ]);
 
@@ -115,6 +115,32 @@ class Game implements \JsonSerializable
 
         $player = new Player();
         $player->setupSession();
+
+        $players = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT COUNT(id) FROM players WHERE game = ?',
+            'bind_param' => ['i', $this->id],
+            'bind_result' => [&$players],
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
+        if ($players === 2) {
+            $status = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT id FROM enums WHERE name = "GAME_STATUS_RUNNING"',
+                'bind_result' => [&$status],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            db_statement($this->db, [
+                'sql' => 'UPDATE games SET status = ? WHERE id = ?',
+                'bind_param' => ['ii', $status, $this->id],
+                'error' => 'Game status change failed',
+                'status' => 500
+            ]);
+        }
 
         return $gameId;
     }
