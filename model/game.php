@@ -86,6 +86,23 @@ class Game implements \JsonSerializable
             error_response('Already in game', 400);
         }
 
+        $status = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT id FROM enums WHERE name = "GAME_STATUS_WAITING_PLAYERS"',
+            'bind_result' => [&$status]
+        ]);
+
+        $gameStatus = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT status FROM games WHERE id = ?',
+            'bind_param' => ['i', $this->id],
+            'bind_result' => [&$gameStatus]
+        ]);
+
+        if ($gameStatus !== $status) {
+            error_response('This game is not waiting for players', 400);
+        }
+
         $userId = $this->user->toArray()['id'];
         $playerId = db_statement($this->db, [
             'sql' => 'INSERT INTO players (user, game) VALUES (?, ?)',
