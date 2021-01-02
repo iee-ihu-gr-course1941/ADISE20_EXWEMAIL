@@ -26,8 +26,12 @@ class Game implements \JsonSerializable
         }
     }
 
-    public function create()
+    public function create($seats)
     {
+        if ($seats < 2 || $seats > 4) {
+            error_response('Invalid seats count', 400);
+        }
+
         $player = new Player();
         $player->setupSession();
 
@@ -59,14 +63,20 @@ class Game implements \JsonSerializable
 
         $rows = db_statement($this->db, [
             'sql' => 'INSERT INTO game_state (field, game, value)
-                VALUES (get_enum("GSTATE_FIELD_HOST"), ?, ?)',
-            'bind_param' => ['ii', $this->id, $playerId],
+                VALUES
+                    (get_enum("GSTATE_FIELD_HOST"), ?, ?),
+                    (get_enum("GSTATE_FIELD_SEATS"), ?, ?)',
+            'bind_param' => [
+                'iiii',
+                $this->id, $playerId,
+                $this->id, $seats
+            ],
             'return' => 'affected_rows',
             'error' => 'Insertion failed',
             'status' => 500
         ]);
 
-        if ($rows !== 1) {
+        if ($rows !== 2) {
             error_response('Insertion failed', 501);
         }
 
@@ -99,6 +109,30 @@ class Game implements \JsonSerializable
             error_response('This game is not waiting for players', 400);
         }
 
+        $players = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT COUNT(id) FROM players WHERE game = ?',
+            'bind_param' => ['i', $gameId],
+            'bind_result' => [&$players],
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
+        $seats = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT value FROM game_state
+                WHERE field = get_enum("GSTATE_FIELD_SEATS") AND game = ?',
+            'bind_param' => ['i', $gameId],
+            'bind_result' => [&$seats],
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+        $seats = (int)$seats;
+
+        if ($players === $seats) {
+            error_response('Game is full', 400);
+        }
+
         $userId = $this->user->toArray()['id'];
         db_statement($this->db, [
             'sql' => 'INSERT INTO players (user, game) VALUES (?, ?)',
@@ -108,19 +142,11 @@ class Game implements \JsonSerializable
             'status' => 500
         ]);
         $this->id = $gameId;
+        $players++;
 
         $player->setupSession();
 
-        $players = 0;
-        db_statement($this->db, [
-            'sql' => 'SELECT COUNT(id) FROM players WHERE game = ?',
-            'bind_param' => ['i', $this->id],
-            'bind_result' => [&$players],
-            'error' => 'Insertion failed',
-            'status' => 500
-        ]);
-
-        if ($players === 2) {
+        if ($players === $seats) {
             db_statement($this->db, [
                 'sql' => 'UPDATE games SET status = get_enum("GAME_STATUS_RUNNING") WHERE id = ?',
                 'bind_param' => ['i', $this->id],
