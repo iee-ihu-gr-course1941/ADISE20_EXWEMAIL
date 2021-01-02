@@ -80,6 +80,15 @@ class Game implements \JsonSerializable
             error_response('Insertion failed', 501);
         }
 
+        db_statement($this->db, [
+            'sql' => 'INSERT INTO player_state (field, player, value)
+                VALUES (get_enum("PSTATE_FIELD_READY"), ?, 0)',
+            'bind_param' => ['i', $playerId],
+            'return' => 'affected_rows',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
         return $this->id;
     }
 
@@ -134,46 +143,26 @@ class Game implements \JsonSerializable
         }
 
         $userId = $this->user->toArray()['id'];
-        db_statement($this->db, [
+        $playerId = db_statement($this->db, [
             'sql' => 'INSERT INTO players (user, game) VALUES (?, ?)',
             'bind_param' => ['ii', $userId, $gameId],
             'return' => 'insert_id',
             'error' => 'Insertion failed',
             'status' => 500
         ]);
+
+        db_statement($this->db, [
+            'sql' => 'INSERT INTO player_state (field, player, value)
+                VALUES (get_enum("PSTATE_FIELD_READY"), ?, 0)',
+            'bind_param' => ['i', $playerId],
+            'return' => 'affected_rows',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
         $this->id = $gameId;
-        $players++;
 
         $player->setupSession();
-
-        if ($players === $seats) {
-            db_statement($this->db, [
-                'sql' => 'UPDATE games SET status = get_enum("GAME_STATUS_RUNNING") WHERE id = ?',
-                'bind_param' => ['i', $this->id],
-                'error' => 'Game status change failed',
-                'status' => 500
-            ]);
-
-            $host = 0;
-            db_statement($this->db, [
-                'sql' => 'SELECT value FROM game_state WHERE field = get_enum("GSTATE_FIELD_HOST") AND game = ?',
-                'bind_param' => ['i', $this->id],
-                'bind_result' => [&$host],
-                'error' => 'Insertion failed',
-                'code' => 500
-            ]);
-
-            db_statement($this->db, [
-                'sql' => 'INSERT INTO game_state (field, game, value)
-                    VALUES (get_enum("GSTATE_FIELD_CURRENT_PLAYER"), ?, ?)',
-                'bind_param' => ['ii', (int)$this->id,  (int)$host],
-                'error' => 'Game field change failed',
-                'status' => 500
-            ]);
-
-            $board = new \DominoZ\Board($this->id);
-            $board->initialize();
-        }
 
         return $gameId;
     }
@@ -268,6 +257,81 @@ class Game implements \JsonSerializable
                 'error' => 'Host update failed',
                 'status' => 500
             ]);
+        }
+
+        return $rows;
+    }
+
+    public function ready()
+    {
+        $player = new Player();
+        $player->setupSession();
+
+        if (!isset($_SESSION['player'])) {
+            error_response('Not in a game', 400);
+        }
+
+        $playerId = $_SESSION['player']['id'];
+        $rows = db_statement($this->db, [
+            'sql' => 'UPDATE player_state SET value = 1
+                WHERE player = ? AND field = get_enum("PSTATE_FIELD_READY")',
+            'bind_param' => ['i', $playerId],
+            'return' => 'affected_rows',
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
+        $seats = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT value FROM game_state
+                WHERE field = get_enum("GSTATE_FIELD_SEATS") AND game = ?',
+            'bind_param' => ['i', $this->id],
+            'bind_result' => [&$seats],
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+        $seats = (int)$seats;
+
+        $readyPlayers = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT COUNT(players.id) FROM players
+                JOIN player_state ON player_state.player = players.id
+                WHERE game = ?
+                AND player_state.field = get_enum("PSTATE_FIELD_READY")
+                AND player_state.value = "1"',
+            'bind_param' => ['i', $this->id],
+            'bind_result' => [&$readyPlayers],
+            'error' => 'Insertion failed',
+            'status' => 500
+        ]);
+
+        if ($readyPlayers === $seats) {
+            db_statement($this->db, [
+                'sql' => 'UPDATE games SET status = get_enum("GAME_STATUS_RUNNING") WHERE id = ?',
+                'bind_param' => ['i', $this->id],
+                'error' => 'Game status change failed',
+                'status' => 500
+            ]);
+
+            $host = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT value FROM game_state WHERE field = get_enum("GSTATE_FIELD_HOST") AND game = ?',
+                'bind_param' => ['i', $this->id],
+                'bind_result' => [&$host],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            db_statement($this->db, [
+                'sql' => 'INSERT INTO game_state (field, game, value)
+                    VALUES (get_enum("GSTATE_FIELD_CURRENT_PLAYER"), ?, ?)',
+                'bind_param' => ['ii', (int)$this->id,  (int)$host],
+                'error' => 'Game field change failed',
+                'status' => 500
+            ]);
+
+            $board = new \DominoZ\Board($this->id);
+            $board->initialize();
         }
 
         return $rows;
