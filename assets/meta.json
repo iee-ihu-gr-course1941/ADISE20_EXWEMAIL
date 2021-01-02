@@ -28,6 +28,10 @@
     "login": [
       "login.html",
       "login.js"
+    ],
+    "lobby": [
+      "lobby.html",
+      "lobby.js"
     ]
   }
 }
