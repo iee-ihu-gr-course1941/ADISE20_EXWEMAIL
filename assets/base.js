@@ -21,7 +21,19 @@ window.onload = async function () {
   const globalComponents = new Map()
   const globalInjections = new Map()
 
-  if (!session.user) {
+  const commonGlobals = Object.freeze({
+    get session () {
+      return session
+    },
+    set session (update) {
+      session[update.field] = update.value
+    },
+    renderPage
+  })
+
+  if (session.user) {
+    renderPage('lobby')
+  } else {
     renderPage('login')
   }
 
@@ -65,7 +77,7 @@ window.onload = async function () {
 
     const componentKey = `${_name}--${componentsCounter++}`
     globalComponents.set(componentKey, null)
-    globalInjections.set(componentKey, {})
+    globalInjections.set(componentKey, { globals: commonGlobals })
 
     const componentData = await fetchComponent(name, isPage)
 
