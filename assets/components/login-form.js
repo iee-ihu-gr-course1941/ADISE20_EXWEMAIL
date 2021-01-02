@@ -1,9 +1,12 @@
 /* eslint-disable-next-line no-unused-expressions */
-({ self }) => {
+({ self, globals: { session, renderPage } }) => {
   self.addEventListener(
     'onLoginSubmit',
     (args) => callback(args)
-      .then(data => alert(`Logged in as ${data.username}`))
+      .then(data => {
+        session = { user: data }
+        renderPage('lobby')
+      })
       .catch(err => console.error(err))
   )
   self.addEventListener(
