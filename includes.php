@@ -7,6 +7,7 @@ define('GAME_STATUS_ENDED', 'ended');
 define('GSTATE_FIELD_HOST', 'host');
 define('GSTATE_FIELD_CURRENT_PLAYER', 'currentPlayer');
 define('GSTATE_FIELD_BOARD', 'board');
+define('GSTATE_FIELD_REMAINING_BONES', 'remainingBones');
 
 define('PSTATE_FIELD_READY', 'ready');
 define('PSTATE_FIELD_HAND', 'hand');
@@ -20,6 +21,8 @@ include_once dirname(__FILE__) . '/model/game.php';
 include_once dirname(__FILE__) . '/model/player.php';
 include_once dirname(__FILE__) . '/model/session.php';
 include_once dirname(__FILE__) . '/model/user.php';
+
+include_once dirname(__FILE__) . '/dominoz/board.php';
 
 function db()
 {

@@ -139,6 +139,9 @@ class Game implements \JsonSerializable
                 'error' => 'Game field change failed',
                 'status' => 500
             ]);
+
+            $board = new \DominoZ\Board($this->id);
+            $board->initialize();
         }
 
         return $gameId;
@@ -267,7 +270,7 @@ class Game implements \JsonSerializable
                     ON pstate_fields.id = player_state.field
                 WHERE games.status = get_enum('GAME_STATUS_WAITING_PLAYERS')",
             'error' => 'List query failed',
-            'code' => 500
+            'status' => 500
         ]);
         $result = $stmt->get_result();
         $games = $result->fetch_all(MYSQLI_ASSOC);
