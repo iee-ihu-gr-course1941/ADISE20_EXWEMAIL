@@ -140,6 +140,38 @@ class Game implements \JsonSerializable
                 'error' => 'Game status change failed',
                 'status' => 500
             ]);
+
+            $fieldHost = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_HOST"',
+                'bind_result' => [&$fieldHost],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            $host = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT value FROM game_state WHERE game = ? AND field = ?',
+                'bind_param' => ['ii', $this->id, $fieldHost],
+                'bind_result' => [&$host],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            $fieldCurrent = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT id FROM enums WHERE name = "GSTATE_FIELD_CURRENT_PLAYER"',
+                'bind_result' => [&$fieldCurrent],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            db_statement($this->db, [
+                'sql' => 'INSERT INTO game_state (game, field, value) VALUES (?, ?, ?)',
+                'bind_param' => ['iii', (int)$this->id, $fieldCurrent, (int)$host],
+                'error' => 'Game field change failed',
+                'status' => 500
+            ]);
         }
 
         return $gameId;
@@ -198,6 +230,23 @@ class Game implements \JsonSerializable
             'status' => 500
         ]);
 
+        $gameStatusRunning = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT id FROM enums WHERE name = "GAME_STATUS_RUNNING"',
+            'bind_result' => [&$gameStatusRunning],
+            'error' => 'Insertion failed',
+            'code' => 500
+        ]);
+
+        $currentGameStatus = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT status FROM games WHERE id = ?',
+            'bind_param' => ['i', $this->id],
+            'bind_result' => [&$currentGameStatus],
+            'error' => 'Could not select status',
+            'status' => 500
+        ]);
+
         if (!$players) {
             $status = 0;
             db_statement($this->db, [
@@ -239,6 +288,21 @@ class Game implements \JsonSerializable
                 'sql' => 'UPDATE game_state SET field = ?, value = ? WHERE game = ?',
                 'bind_param' => ['iii', $field, $playerId, $this->id],
                 'error' => 'Insertion failed',
+                'status' => 500
+            ]);
+        } elseif ($currentGameStatus === $gameStatusRunning) {
+            $status = 0;
+            db_statement($this->db, [
+                'sql' => 'SELECT id FROM enums WHERE name = "GAME_STATUS_ENDED"',
+                'bind_result' => [&$status],
+                'error' => 'Insertion failed',
+                'code' => 500
+            ]);
+
+            db_statement($this->db, [
+                'sql' => 'UPDATE games SET status = ? WHERE id = ?',
+                'bind_param' => ['ii', $status, $this->id],
+                'error' => 'Game status change failed',
                 'status' => 500
             ]);
         }
