@@ -67,4 +67,9 @@ CREATE TABLE player_state (
   CONSTRAINT pstate_value_uindex UNIQUE (player, field) -- Prevent duplicate states
 );
 
+DROP FUNCTION IF EXISTS get_enum;
+CREATE FUNCTION get_enum (name VARCHAR(255))
+  RETURNS int(6) unsigned
+  RETURN (SELECT id FROM enums WHERE enums.name = name);
+
 SOURCE data.sql
