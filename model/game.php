@@ -278,16 +278,9 @@ class Game implements \JsonSerializable
             ]);
 
             db_statement($this->db, [
-                'sql' => 'UPDATE game_state SET field = ?, value = ? WHERE game = ?',
-                'bind_param' => ['iii', $field, $playerId, $this->id],
+                'sql' => 'UPDATE game_state SET value = ? WHERE game = ? AND field = ?',
+                'bind_param' => ['iii', $playerId, $this->id, $field],
                 'error' => 'Host update failed',
-                'status' => 500
-            ]);
-
-            db_statement($this->db, [
-                'sql' => 'UPDATE game_state SET field = ?, value = ? WHERE game = ?',
-                'bind_param' => ['iii', $field, $playerId, $this->id],
-                'error' => 'Insertion failed',
                 'status' => 500
             ]);
         } elseif ($currentGameStatus === $gameStatusRunning) {
