@@ -28,6 +28,9 @@ class Game implements \JsonSerializable
 
     public function create()
     {
+        $player = new Player();
+        $player->setupSession();
+
         if (isset($_SESSION['player'])) {
             error_response('Already in game', 400);
         }
@@ -72,6 +75,9 @@ class Game implements \JsonSerializable
 
     public function join($gameId)
     {
+        $player = new Player();
+        $player->setupSession();
+
         if (isset($_SESSION['player'])) {
             error_response('Already in game', 400);
         }
@@ -103,7 +109,6 @@ class Game implements \JsonSerializable
         ]);
         $this->id = $gameId;
 
-        $player = new Player();
         $player->setupSession();
 
         $players = 0;
