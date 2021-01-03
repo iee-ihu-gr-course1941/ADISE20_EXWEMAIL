@@ -3,12 +3,21 @@
 class Movements
 {
     private $db;
-    private $board;
+    private $game;
+    private $gameStatus;
+    private $player;
 
-    public function __construct()
+    public function __construct($game, $player)
     {
         require_once(dirname(__FILE__) . '/../includes.php');
         $this->db = db();
+        $this->game = $game;
+        $this->player = $player;
+        $this->gameStatus = $this->game->getStatus($player);
+
+        if ($this->gameStatus['game']['status'] !== "running") {
+            error_response('Game is not running', 400);
+    }
     }
 
     public function place($bone, $position)
