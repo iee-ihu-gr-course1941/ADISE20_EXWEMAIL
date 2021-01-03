@@ -1,8 +1,12 @@
 /* body styling */
 #SELF {
   font-family: sans-serif;
-  padding-top: 1rem;
-  background: #0F0506;
+  padding-top: 0.3rem;
+  background:rgb(16,17,18);
+}
+#SELF   .component-body{
+  max-width: 1366px;
+  margin: auto;
 }
 
 /* body grid - when less than 900px do not use grid  ---last section---*/
@@ -17,8 +21,8 @@
   position: relative;
   text-align: center;
   font-weight: 800;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 #SELF .welcome {
@@ -26,21 +30,17 @@
 }
 #SELF   .welcome h1{
   color: #ffffff;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 
-#SELF  .welcome a {
+#SELF  .welcome img {
   height: 144px;
   width: 256px;
   object-fit: fill;
   display: inline-block;
-  background: transparent url('assets/images/wd.1.icon.png') no-repeat 0 0;
   background-size: contain;
-}
-
-#SELF  .welcome a:hover{
-  display: inline-block;
-  background: transparent url('assets/images/wd.2.icon.png') no-repeat 0 0;
-  background-size: contain;
+  margin-top: 1rem;
 }
 
 /* specify every halfs parameters */
@@ -50,12 +50,8 @@
   flex-flow: column;
   margin: 1rem;
   padding: 1rem;
-  border: 1px solid #540b0e;
-  border-radius: 60px;
-}
-
-#SELF  .component-body .half h2{
-  color: #ffffff;
+  padding-top: 2rem;
+  border-radius: 2rem;
 }
 
 #SELF  .component-body .half .component {
@@ -81,16 +77,16 @@
   font-size: 20px;
   font-weight: 400;
   padding: 9px 28px;
-  margin-top: 10px;
-  border-radius: 10px;
-  background: #e09f3e;
-  border-color: #fff3b0;
+  margin-top: auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(45,49,51);
+  color: white;
   transition: all 0.6s ease;
 }
 
 #SELF  .component .component-body input[type="submit"]:hover {
-  background: #fff6c2;
-  border-color: #FFF9D6;
+  background-color: rgb(42,46,47);
   cursor: pointer;
 
 }
@@ -99,18 +95,21 @@
   max-width: 18rem;
   float: right;
   margin-right: 10%;
+  background-color: rgb(45,49,51);
+  border: none;
+  color: white;
+  font-size: 1.25em;
+  text-align-last: center;
 }
+
+
 
 
 
 /* login and register styling ---------box styling and positions--*/
 
 #SELF  .half{
-  background: #540b0e;
-}
-#SELF  .half h2 {
-  font-size: 30px;
-  text-align: center;
+  background: rgb(35,38,40)
 }
 
 #SELF .component-body .half div{
@@ -122,13 +121,13 @@
 /* about styling*/
 
 section {
-  padding: 50px;
+  padding: 85px;
 }
 #SELF .about .max-width{
   max-width: 100%;
 }
 #SELF .about .title{
-  color: #7cc42b;
+  color: white;
   position: relative;
   text-align: center;
   font-size: 30px;
@@ -144,7 +143,7 @@ section {
   left: 50%;
   width: 550px;
   height: 3px;
-  background: #335C67;
+  background: rgb(45,49,51);
   transform: translateX(-50%);
 }
 
@@ -156,7 +155,7 @@ section {
   left: 50%;
   font-size: 15px;
   padding: 5px ;
-  background: #335C67;
+  background: rgb(45,49,51);
   transform: translateX(-50%);
 }
 
@@ -164,37 +163,15 @@ section {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-}
-
-#SELF   .about .about-content .left{
-  width: 25%;
-}
-
-#SELF   .about .about-content .left img {
-  height: 300px;
-  width: 300px;
-  object-fit: scale-down;
+  justify-content: center;
 }
 
 #SELF   .about .about-content .right {
-  width: 75%;
-}
-
-#SELF   .about .about-content .right .text {
-  font-size: 20px;
-  font-weight: 800;
-  margin-bottom: 10px;
-  color: #264653;
-}
-
-#SELF   .about .about-content .right .text span {
-  color: #437a89;
-  font-size:18px;
+  max-width: 900px;
 }
 
 #SELF   .about .about-content .right p {
-  color: #5192a4;
+  color:white;
   text-align: justify;
 }
 
