@@ -15,7 +15,7 @@ class Board
     {
         $bones = [];
         for ($i = 0; $i < 7; $i++) {
-            for ($j = 0; $j < 7; $j++) {
+            for ($j = $i; $j < 7; $j++) {
                 $bones[] = [$i, $j];
             }
         }
