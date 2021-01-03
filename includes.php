@@ -24,6 +24,7 @@ include_once dirname(__FILE__) . '/model/session.php';
 include_once dirname(__FILE__) . '/model/user.php';
 
 include_once dirname(__FILE__) . '/dominoz/board.php';
+include_once dirname(__FILE__) . '/dominoz/movements.php';
 
 function db()
 {

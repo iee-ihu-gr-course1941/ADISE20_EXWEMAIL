@@ -59,9 +59,6 @@ class Game implements \JsonSerializable
             'status' => 500
         ]);
 
-        $player = new Player();
-        $player->setupSession();
-
         $rows = db_statement($this->db, [
             'sql' => 'INSERT INTO game_state (field, game, value)
                 VALUES
@@ -90,7 +87,7 @@ class Game implements \JsonSerializable
             'status' => 500
         ]);
 
-        return $this->id;
+        return $this->getStatus();
     }
 
     public function join($gameId)
@@ -163,9 +160,7 @@ class Game implements \JsonSerializable
 
         $this->id = $gameId;
 
-        $player->setupSession();
-
-        return $gameId;
+        return $this->getStatus($player);
     }
 
     public function leave()
@@ -394,10 +389,12 @@ class Game implements \JsonSerializable
         return $gamesParsed;
     }
 
-    public function getStatus()
+    public function getStatus($player = null)
     {
-        $player = new Player();
-        $player->setupSession();
+        if (!$player) {
+            $player = new Player();
+            $player->setupSession();
+        }
 
         if (!isset($_SESSION['player'])) {
             error_response('Not in a game', 400);
@@ -414,22 +411,28 @@ class Game implements \JsonSerializable
             break;
         }
 
-        $bonesPerPlayer = [];
+        $players = [];
         foreach ($this->players as $gamePlayer) {
             $hand = $gamePlayer->toArray()['state']['hand'];
 
-            $bonesPerPlayer[] = [
+            $players[] = [
                 'id' => $gamePlayer->getId(),
                 'username' => $gamePlayer->toArray()['username'],
+                'ready' => $gamePlayer->toArray()['ready'],
                 'bones' => $hand ? count($hand) : null
             ];
         }
 
         return [
-            'status' => $this->status,
+            'turn' => $this->state['currentPlayer'],
             'board' => $this->state['board'],
             'hand' => $player->toArray()['state']['hand'],
-            'bonesPerPlayer' => $bonesPerPlayer
+            'players' => $players,
+            'game' => [
+                'id' => $this->id,
+                'code' => $this->code,
+                'status' => $this->status
+            ]
         ];
     }
 
@@ -462,7 +465,8 @@ class Game implements \JsonSerializable
                     ON player_state.player = players.id
                 LEFT JOIN enums AS pstate_fields
                     ON pstate_fields.id = player_state.field
-                WHERE games.id = ?",
+                WHERE games.id = ?
+                ORDER BY playerId ASC",
             'bind_param' => ['i', $id],
             'error' => 'Could not query game',
             'status' => 500

@@ -6,7 +6,7 @@ class Player implements \JsonSerializable
     private $user;
 
     private $id;
-    private $game;
+    private $gameId;
     private $userId;
     private $username;
     private $state;
@@ -48,15 +48,28 @@ class Player implements \JsonSerializable
             $player = $result->fetch_assoc();
             $_SESSION['player'] = $player;
             $this->id = $player['id'];
+            $this->gameId = $player['game'];
         } elseif (isset($_SESSION['player'])) {
             unset($_SESSION['player']);
         }
     }
 
+    public function placeBone($boneIndex, $position)
+    {
+        $this->setupSession();
+        $game = new Game();
+        $game->fromId($this->gameId);
+
+        $movements = new \DominoZ\Movements($game, $this);
+        $movements->place($boneIndex, $position);
+
+        return $game->getStatus($this);
+    }
+
     public function fromPlayerGroup($group)
     {
         $this->id = $group[0]['playerId'];
-        $this->game = $group[0]['id'];
+        $this->gameId = $group[0]['id'];
         $this->userId = $group[0]['userId'];
         $this->username = $group[0]['username'];
 
@@ -70,7 +83,7 @@ class Player implements \JsonSerializable
         }
 
         if (isset($this->state['ready'])) {
-            $this->state['ready'] = (int)$this->state['ready'];
+            $this->state['ready'] = (bool)$this->state['ready'];
         }
 
         if (isset($this->state['hand'])) {
@@ -91,7 +104,7 @@ class Player implements \JsonSerializable
 
         return [
             'id' => $this->id,
-            'game' => $this->game,
+            'game' => $this->gameId,
             'userId' => $this->userId,
             'username' => $this->username,
             'state' => $this->state
