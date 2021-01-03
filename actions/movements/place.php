@@ -1,16 +1,16 @@
 <?php
 
-use DominoZ\Movements;
+use model\Player;
 
 return (function () {
     require_once(dirname(__FILE__) . '/../../includes.php');
 
-    $bone = $_POST['bone'];
-    $position = $_POST['position'];
+    $bone = (int)$_POST['bone'];
+    $position = (int)$_POST['position'];
 
-    $movements = new Movements();
-    $rows = $movements->place($bone, $position);
+    $player = new Player();
+    $status = $player->placeBone($bone, $position);
 
     header('Content-Type: application/json');
-    echo $rows;
+    echo json_encode($status);
 })();

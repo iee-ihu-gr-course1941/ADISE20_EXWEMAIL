@@ -54,6 +54,18 @@ class Player implements \JsonSerializable
         }
     }
 
+    public function placeBone($boneIndex, $position)
+    {
+        $this->setupSession();
+        $game = new Game();
+        $game->fromId($this->gameId);
+
+        $movements = new \DominoZ\Movements($game, $this);
+        $movements->place($boneIndex, $position);
+
+        return $game->getStatus($this);
+    }
+
     public function fromPlayerGroup($group)
     {
         $this->id = $group[0]['playerId'];
