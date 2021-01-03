@@ -22,17 +22,25 @@
 }
 
 #SELF .welcome {
-  font-size: 36px;
+  font-size: 50px;
 }
 #SELF   .welcome h1{
   color: #ffffff;
 }
 
-#SELF  .welcome img {
-  height: 120px;
-  width: 200px;
-  object-fit: cover;
+#SELF  .welcome a {
+  height: 144px;
+  width: 256px;
+  object-fit: fill;
   display: inline-block;
+  background: transparent url('assets/images/wd.1.icon.png') no-repeat 0 0;
+  background-size: contain;
+}
+
+#SELF  .welcome a:hover{
+  display: inline-block;
+  background: transparent url('assets/images/wd.2.icon.png') no-repeat 0 0;
+  background-size: contain;
 }
 
 /* specify every halfs parameters */
@@ -116,25 +124,25 @@
 section {
   padding: 50px;
 }
-#SELF   .about .max-width{
+#SELF .about .max-width{
   max-width: 100%;
 }
-#SELF   .about .title{
+#SELF .about .title{
   color: #7cc42b;
   position: relative;
   text-align: center;
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 800;
   margin-bottom: 30px;
   padding-bottom: 30px;
 }
 
-#SELF   .about .title::before{
+#SELF .about .title::before{
   content: "";
   position: absolute;
   bottom: 0px;
   left: 50%;
-  width: 502px;
+  width: 550px;
   height: 3px;
   background: #335C67;
   transform: translateX(-50%);
