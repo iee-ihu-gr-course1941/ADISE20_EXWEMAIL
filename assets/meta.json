@@ -13,14 +13,6 @@
     "login-form-register": [
       "login-form-register.html",
       "login-form-register.js"
-    ],
-    "test-input": [
-      "test-input.html",
-      "test-input.js"
-    ],
-    "test": [
-      "test.html",
-      "test.js"
     ]
   },
   "pages": {
@@ -28,6 +20,11 @@
     "login": [
       "login.html",
       "login.js"
+    ],
+    "lobby": [
+      "lobby.css",
+      "lobby.html",
+      "lobby.js"
     ]
   }
 }

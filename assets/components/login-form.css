@@ -1,46 +1,205 @@
+/* body styling */
 #SELF {
   font-family: sans-serif;
-  padding-top: 10rem;
+  padding-top: 0.3rem;
+  background:rgb(16,17,18);
+}
+#SELF   .component-body{
+  max-width: 1366px;
+  margin: auto;
 }
 
-#SELF > .component-body {
+/* body grid - when less than 900px do not use grid  ---last section---*/
+#SELF   .component-body .split{
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-@media screen and (max-width: 900px) {
-  #SELF > .component-body {
-    grid-template-columns: 1fr;
-  }
+/* welcome styling*/
+
+#SELF   .centerwelcome {
+  position: relative;
+  text-align: center;
+  font-weight: 800;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 
-#SELF > .component-body > .half {
+#SELF .welcome {
+  font-size: 50px;
+}
+#SELF   .welcome h1{
+  color: #ffffff;
+  margin: 0;
+  margin-top: 0.5rem;
+}
+
+#SELF  .welcome img {
+  height: 144px;
+  width: 256px;
+  object-fit: fill;
+  display: inline-block;
+  background-size: contain;
+  margin-top: 1rem;
+}
+
+/* specify every halfs parameters */
+
+#SELF  .component-body .half {
   display: flex;
   flex-flow: column;
-  margin: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid black;
+  margin: 1rem;
+  padding: 1rem;
+  padding-top: 2rem;
+  border-radius: 2rem;
 }
 
-#SELF > .component-body > .half .component {
+#SELF  .component-body .half .component {
   flex: 1 1 auto;
 }
 
-#SELF > .component-body > .half .component > .component-body,
-#SELF > .component-body > .half .component > .component-body > form {
+#SELF  .component-body .half .component > .component-body,
+#SELF  .component-body .half .component > .component-body > form {
   height: 100%;
   display: flex;
   flex-direction: row;
   flex-flow: column;
 }
 
-#SELF form input[type="submit"] {
+/* login and register styling -----------------------------------*/
+
+
+
+/* login and register styling--------submit button---------------*/
+#SELF  .component .component-body input[type="submit"] {
+  align-self: center;
+  justify-content: space-evenly;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 9px 28px;
   margin-top: auto;
-  align-self: start;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(45,49,51);
+  color: white;
+  transition: all 0.6s ease;
 }
 
-#SELF form input:not([type="submit"]) {
-  width: 60%;
-  max-width: 16rem;
+#SELF  .component .component-body input[type="submit"]:hover {
+  background-color: rgb(42,46,47);
+  cursor: pointer;
+
+}
+#SELF  .component .component-body input:not([type="submit"]){
+  width: 35%;
+  max-width: 18rem;
   float: right;
+  margin-right: 10%;
+  background-color: rgb(45,49,51);
+  border: none;
+  color: white;
+  font-size: 1.25em;
+  text-align-last: center;
+}
+
+
+
+
+
+/* login and register styling ---------box styling and positions--*/
+
+#SELF  .half{
+  background: rgb(35,38,40)
+}
+
+#SELF .component-body .half div{
+  color: #ffffff;
+  text-align: center;
+  justify-content: space-between;
+}
+
+/* about styling*/
+
+section {
+  padding: 85px;
+}
+#SELF .about .max-width{
+  max-width: 100%;
+}
+#SELF .about .title{
+  color: white;
+  position: relative;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+}
+
+#SELF .about .title::before{
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  width: 550px;
+  height: 3px;
+  background: rgb(45,49,51);
+  transform: translateX(-50%);
+}
+
+
+#SELF   .about .title::after{
+  content: "Κανόνες";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  font-size: 15px;
+  padding: 5px ;
+  background: rgb(45,49,51);
+  transform: translateX(-50%);
+}
+
+#SELF   .about .about-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#SELF   .about .about-content .right {
+  max-width: 900px;
+}
+
+#SELF   .about .about-content .right p {
+  color:white;
+  text-align: justify;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* responsive changes----------------------------*/
+
+
+
+@media screen and (max-width: 1024px) {
+  #SELF   .component-body .split {
+    grid-template-columns: 1fr;
+  }
+  #SELF   .about .max-width .about-content .left img {
+    height: 150px;
+    width: 150px;
+  }
 }
