@@ -66,8 +66,13 @@ class Board
 
         db_statement($this->db, [
             'sql' => 'INSERT INTO game_state (field, game, value)
-                VALUES (get_enum("GSTATE_FIELD_REMAINING_BONES"), ?, ?)',
-            'bind_param' => ['is', $this->id, json_encode($bones)],
+                VALUES
+                    (get_enum("GSTATE_FIELD_REMAINING_BONES"), ?, ?),
+                    (get_enum("GSTATE_FIELD_BOARD"), ?, ?)',
+            'bind_param' => ['isis',
+                $this->id, json_encode($bones),
+                $this->id, '[]'
+            ],
             'error' => 'Board initialization failed',
             'status' => 500
         ]);

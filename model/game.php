@@ -7,6 +7,7 @@ class Game implements \JsonSerializable
 
     private $id;
     private $code;
+    private $status;
     private $players;
     private $state;
 
@@ -363,7 +364,14 @@ class Game implements \JsonSerializable
                     ON player_state.player = players.id
                 LEFT JOIN enums AS pstate_fields
                     ON pstate_fields.id = player_state.field
-                WHERE games.status = get_enum('GAME_STATUS_WAITING_PLAYERS')",
+                WHERE games.status = get_enum('GAME_STATUS_WAITING_PLAYERS')
+                    AND gstate_fields.name IN (
+                        'GSTATE_FIELD_HOST',
+                        'GSTATE_FIELD_SEATS'
+                    )
+                    AND pstate_fields.name IN (
+                        'PSTATE_FIELD_READY'
+                    )",
             'error' => 'List query failed',
             'status' => 500
         ]);
@@ -386,6 +394,87 @@ class Game implements \JsonSerializable
         return $gamesParsed;
     }
 
+    public function getStatus()
+    {
+        $player = new Player();
+        $player->setupSession();
+
+        if (!isset($_SESSION['player'])) {
+            error_response('Not in a game', 400);
+        }
+
+        $this->fromId($this->id);
+
+        foreach ($this->players as $gamePlayer) {
+            if ($gamePlayer->getId() !== $player->getId()) {
+                continue;
+            }
+
+            $player = $gamePlayer;
+            break;
+        }
+
+        $bonesPerPlayer = [];
+        foreach ($this->players as $gamePlayer) {
+            $hand = $gamePlayer->toArray()['state']['hand'];
+
+            $bonesPerPlayer[] = [
+                'id' => $gamePlayer->getId(),
+                'username' => $gamePlayer->toArray()['username'],
+                'bones' => $hand ? count($hand) : null
+            ];
+        }
+
+        return [
+            'status' => $this->status,
+            'board' => $this->state['board'],
+            'hand' => $player->toArray()['state']['hand'],
+            'bonesPerPlayer' => $bonesPerPlayer
+        ];
+    }
+
+    public function fromId($id)
+    {
+        $stmt = db_statement($this->db, [
+            'sql' => "SELECT
+                    games.id,
+                    games.code,
+                    gstatus.name AS status,
+                    gstate_fields.name AS gstate_field,
+                    game_state.value AS gstate_value,
+                    players.id as playerId,
+                    users.id AS userId,
+                    users.username,
+                    pstate_fields.name AS pstate_field,
+                    player_state.value AS pstate_value
+                FROM games
+                JOIN enums AS gstatus
+                    ON gstatus.id = games.status
+                JOIN game_state
+                    ON game_state.game = games.id
+                JOIN enums AS gstate_fields
+                    ON gstate_fields.id = game_state.field
+                JOIN players
+                    ON players.game = games.id
+                JOIN users
+                    ON users.id = players.user
+                LEFT JOIN player_state
+                    ON player_state.player = players.id
+                LEFT JOIN enums AS pstate_fields
+                    ON pstate_fields.id = player_state.field
+                WHERE games.id = ?",
+            'bind_param' => ['i', $id],
+            'error' => 'Could not query game',
+            'status' => 500
+        ]);
+
+        $result = $stmt->get_result();
+        $group = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        $this->fromGameGroup($group);
+    }
+
     public function fromGameGroup($group)
     {
         if (count($group) === 0) {
@@ -394,7 +483,12 @@ class Game implements \JsonSerializable
 
         $this->id = $group[0]['id'];
         $this->code = $group[0]['code'];
-        $this->players = [];
+
+        if (isset($group[0]['status'])) {
+            $this->status = constant($group[0]['status']);
+        } elseif (isset($this->status)) {
+            unset($this->status);
+        }
 
         $this->state = [];
         foreach ($group as $gameRow) {
@@ -402,9 +496,25 @@ class Game implements \JsonSerializable
             $this->state[$field] = $gameRow['gstate_value'];
         }
 
-        $this->loadPlayers($group);
-
         $this->state['host'] = (int)($this->state['host']);
+
+        if (isset($this->state['remainingBones'])) {
+            $this->state['remainingBones'] = json_decode($this->state['remainingBones']);
+        }
+
+        if (isset($this->state['board'])) {
+            $this->state['board'] = json_decode($this->state['board']);
+        }
+
+        if (isset($this->state['seats'])) {
+            $this->state['seats'] = (int)($this->state['seats']);
+        }
+
+        if (isset($this->state['currentPlayer'])) {
+            $this->state['currentPlayer'] = (int)($this->state['currentPlayer']);
+        }
+
+        $this->loadPlayers($group);
     }
 
     public function loadPlayers($group)

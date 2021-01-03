@@ -45,7 +45,11 @@ class Player implements \JsonSerializable
 
         $result = $stmt->get_result();
         if ($result) {
-            $_SESSION['player'] = $result->fetch_assoc();
+            $player = $result->fetch_assoc();
+            $_SESSION['player'] = $player;
+            $this->id = $player['id'];
+        } elseif (isset($_SESSION['player'])) {
+            unset($_SESSION['player']);
         }
     }
 
@@ -64,6 +68,19 @@ class Player implements \JsonSerializable
             $field = constant($playerRow['pstate_field']);
             $this->state[$field] = $playerRow['pstate_value'];
         }
+
+        if (isset($this->state['ready'])) {
+            $this->state['ready'] = (int)$this->state['ready'];
+        }
+
+        if (isset($this->state['hand'])) {
+            $this->state['hand'] = json_decode($this->state['hand']);
+        }
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function toArray()

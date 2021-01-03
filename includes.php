@@ -8,6 +8,7 @@ define('GSTATE_FIELD_HOST', 'host');
 define('GSTATE_FIELD_CURRENT_PLAYER', 'currentPlayer');
 define('GSTATE_FIELD_BOARD', 'board');
 define('GSTATE_FIELD_REMAINING_BONES', 'remainingBones');
+define('GSTATE_FIELD_SEATS', 'seats');
 
 define('PSTATE_FIELD_READY', 'ready');
 define('PSTATE_FIELD_HAND', 'hand');
