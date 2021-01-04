@@ -8,10 +8,10 @@
         entry.innerText = game.code
         entry.addEventListener('click', click, false)
         entry.addEventListener('mouseover', mouseOver, false)
-        function mouseOver () {
+        function mouseOver() {
 
         }
-        function click () {
+        function click() {
           const join = new URLSearchParams()
           join.append('game-id', game.id)
           fetch('actions/game/join.php', {
@@ -21,8 +21,16 @@
             .then(response => response.json())
             .then(data => console.log(data))
         }
-        const listofgames = document.getElementById('listofgames')
+        const listofgames = self.querySelector('ul')
         listofgames.appendChild(entry)
       })
     )
+
+  // typing animation
+  const typed = new Typed ('.typing', {
+    strings: ['Set down doubles early.', 'Set down your heavier tiles early.', 'Hold on to a variety of suits.', 'Note your opponents weak suits.', 'Work out your opponent\'s hand.'],
+    typeSpeed: 60,
+    backSpeed: 70,
+    loop: true
+  })
 }

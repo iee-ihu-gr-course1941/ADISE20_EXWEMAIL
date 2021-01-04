@@ -19,6 +19,7 @@ $assetMeta = json_decode($assetMeta);
 
 <body>
     <div id="app"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
     <script src="assets/base.js"></script>
 </body>
 
