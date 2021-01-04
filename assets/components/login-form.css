@@ -1,23 +1,22 @@
 /* body styling */
 #SELF {
   font-family: sans-serif;
-  padding-top: 0.3rem;
   background:rgb(16,17,18);
 }
-#SELF   .component-body{
+#SELF .component-body{
   max-width: 1366px;
   margin: auto;
 }
 
 /* body grid - when less than 900px do not use grid  ---last section---*/
-#SELF   .component-body .split{
+#SELF .component-body .split{
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
 /* welcome styling*/
 
-#SELF   .centerwelcome {
+#SELF .centerwelcome {
   position: relative;
   text-align: center;
   font-weight: 800;
@@ -45,7 +44,7 @@
 
 /* specify every halfs parameters */
 
-#SELF  .component-body .half {
+#SELF .component-body .half {
   display: flex;
   flex-flow: column;
   margin: 1rem;
@@ -62,7 +61,6 @@
 #SELF  .component-body .half .component > .component-body > form {
   height: 100%;
   display: flex;
-  flex-direction: row;
   flex-flow: column;
 }
 
@@ -70,7 +68,7 @@
 
 
 
-/* login and register styling--------submit button---------------*/
+/* login and register styling--------submit buttons---------------*/
 #SELF  .component .component-body input[type="submit"] {
   align-self: center;
   justify-content: space-evenly;
@@ -88,7 +86,6 @@
 #SELF  .component .component-body input[type="submit"]:hover {
   background-color: rgb(42,46,47);
   cursor: pointer;
-
 }
 #SELF  .component .component-body input:not([type="submit"]){
   width: 35%;
@@ -100,6 +97,7 @@
   color: white;
   font-size: 1.25em;
   text-align-last: center;
+  overflow: inherit;
 }
 
 
@@ -177,7 +175,27 @@ section {
 
 
 
+/* mozzila pecific rules ----------------------*/
 
+
+@-moz-document url-prefix() {
+
+  .component-body .half {
+    display: flex;
+    flex-flow: column;
+    margin: 1rem;
+    padding: 1rem;
+    padding-top: 2rem;
+    border-radius: 2rem;
+  }
+
+  .component-body .half div{
+    padding: 0.7rem;
+  }
+
+
+
+}
 
 
 
