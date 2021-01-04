@@ -1,3 +1,4 @@
+/* globals Typed */
 /* eslint-disable-next-line no-unused-expressions */
 ({ self }) => {
   fetch('actions/game/list.php')
@@ -21,8 +22,17 @@
             .then(response => response.json())
             .then(data => console.log(data))
         }
-        const listofgames = document.getElementById('listofgames')
+        const listofgames = self.querySelector('ul')
         listofgames.appendChild(entry)
       })
     )
+
+  // typing animation
+  /* eslint-disable-next-line no-new */
+  new Typed('.typing', {
+    strings: ['Set down doubles early.', 'Set down your heavier tiles early.', 'Hold on to a variety of suits.', 'Note your opponents weak suits.', 'Work out your opponent\'s hand.'],
+    typeSpeed: 60,
+    backSpeed: 70,
+    loop: true
+  })
 }

@@ -1,9 +1,106 @@
+/* body styling-----------*/
 #SELF {
   font-family: sans-serif;
-  padding-top: 1rem;
-
+  background:rgb(16,17,18);
+}
+#SELF .max-width{
+  max-width: 1366px;
+  padding: 1rem;
+  margin: auto;
+  min-height: 100%;
+  color: white;
 }
 
-#SELF .hover {
-  background-color: brown;
+/* HEADING-information styling-----------*/
+#SELF .max-width .container .infor {
+  align-content: center;
+  margin: auto;
+  max-width: fit-content;
+}
+
+#SELF .max-width .container .infor h2{
+  text-align: center;
+  font-size: 30px;
+}
+
+/* available games styling-----------*/
+#SELF .max-width .container .games {
+  max-width: 33%;
+  max-height: 60vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  justify-content: space-evenly;
+  padding: 2rem;
+  margin-left: 33%;
+  background: rgb(42,46,47);
+  border: none;
+  border-radius: 1rem;
+}
+
+#SELF .container .games h3{
+  margin: auto;
+  font-size: 22px;
+  padding-left: 3rem;
+  padding-bottom: 3vh;
+}
+.container .games ul{
+  list-style-type: none;
+}
+
+#SELF .container .games li{
+  padding: 0.3rem;
+  margin: auto;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  margin-top: 5px;
+  padding-top: 5px;
+  max-width: 60%;
+  cursor:pointer;
+  background-color:rgb(35,38,40);
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 40;
+}
+
+/* quick tips ----------------------*/
+
+.max-width .container .rules {
+  padding-left: 5%;
+  max-width: 35%;
+}
+
+.max-width .container .rules span {
+  font-size: 26px;
+}
+
+
+/* browser specific rules ----------------------*/
+
+#SELF .max-width .container .games::-webkit-scrollbar {
+  display:none;
+}
+
+@-moz-document url-prefix() {
+
+  #SELF.container .games ul{
+    list-style-type: none;
+    max-width: fit-content;
+    padding: 2rem;
+  }
+
+  #SELF .container .games li{
+    padding: 0.3rem;
+    margin: auto;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+    padding-top: 5px;
+    cursor:pointer;
+    background-color:rgb(35,38,40);
+    border-radius: 0.5rem;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 40;
+  }
 }
