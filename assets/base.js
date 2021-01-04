@@ -32,7 +32,11 @@ window.onload = async function () {
   })
 
   if (session.user) {
-    renderPage('lobby')
+    if (session.player) {
+      renderPage('board')
+    } else {
+      renderPage('lobby')
+    }
   } else {
     renderPage('login')
   }

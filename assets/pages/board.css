@@ -1,0 +1,68 @@
+#SELF > .page-body {
+  display: flex;
+  justify-content: space-around;
+}
+
+#SELF .board{
+  width: 100vh;
+  height: 100vh;
+  background-image: url('assets/images/board.background.jpg');
+  display: flex;
+}
+
+#SELF .board-background {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+#SELF .board-background > .content {
+  width: 100%;
+}
+
+#SELF .board-border {
+  background-image: url('assets/images/board.border.jpg');
+  position: absolute;
+  width: 100vh;
+  height: 2rem;
+}
+
+#SELF .board-border.horizontal::before,
+#SELF .board-border.horizontal::after {
+  background-image: url('assets/images/board.corner.jpg');
+  width: 2rem;
+  height: 2rem;
+  content: '';
+  display: inline-block;
+  position: absolute;
+  z-index: 999;
+}
+
+#SELF .board-border.horizontal::after {
+  margin-left: calc(100vh - 2rem);
+}
+
+#SELF .board-border.horizontal:last-of-type {
+  align-self: flex-end;
+}
+
+#SELF .board-border.vertical {
+  width: calc(100vh - 2rem);
+  top: 0;
+  transform: rotateZ(90deg);
+  transform-origin: 0% 100%;
+}
+
+#SELF .board-border.vertical:last-of-type {
+  transform: rotateZ(-90deg);
+  transform-origin: 100% 0%;
+  margin-left: auto;
+}
+
+#SELF .component--board-bones {
+  width: calc(100vh - 4rem);
+  height: calc(100vh - 4rem);
+  margin-top: 2rem;
+  margin-left: 2rem;
+  position: absolute;
+}
