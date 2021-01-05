@@ -160,6 +160,7 @@ class Game implements \JsonSerializable
 
         $this->id = $gameId;
 
+        $player->setupSession();
         return $this->getStatus($player);
     }
 
@@ -423,7 +424,7 @@ class Game implements \JsonSerializable
             ];
         }
 
-        return [
+        $status = [
             'turn' => $this->state['currentPlayer'],
             'board' => $this->state['board'],
             'hand' => $player->toArray()['state']['hand'],
@@ -434,6 +435,12 @@ class Game implements \JsonSerializable
                 'status' => $this->status
             ]
         ];
+
+        $movements = new \DominoZ\Movements($this, $player, $status);
+        $suggestions = $movements->suggestions();
+
+        $status['suggestions'] = $suggestions;
+        return $status;
     }
 
     public function fromId($id)
