@@ -163,4 +163,26 @@ class Movements
             'status' => 500
         ]);
     }
+
+    public function suggestions()
+    {
+        if ($this->gameStatus['game']['status'] !== "running") {
+            return null;
+        }
+
+        $board = $this->gameStatus['board'];
+        $hand = $this->gameStatus['hand'];
+        $countBoard = count($board) - 1;
+        $suggestions = [];
+        foreach ($hand as $bone) {
+            if (($board[$countBoard][1] === $bone[0]) ||
+                ($board[0][0] === $bone[1]) ||
+                ($board[0][0] === $bone[0]) ||
+                ($board[$countBoard][1] === $bone[1])
+            ) {
+                $suggestions[] = $bone;
+            }
+        }
+        return $suggestions;
+    }
 }
