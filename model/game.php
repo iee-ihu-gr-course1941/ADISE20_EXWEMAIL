@@ -436,6 +436,10 @@ class Game implements \JsonSerializable
             ]
         ];
 
+        if (!$status['hand'] && $status['board']) {
+            return ['message' => 'You are the winner!'];
+        }
+
         $movements = new \DominoZ\Movements($this, $player, $status);
         $suggestions = $movements->suggestions();
 
