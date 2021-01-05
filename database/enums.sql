@@ -9,6 +9,7 @@ INSERT IGNORE INTO enums (name) VALUES
 ('GSTATE_FIELD_BOARD'), -- JSON array
 ('GSTATE_FIELD_REMAINING_BONES'), -- JSON array
 ('GSTATE_FIELD_SEATS'), -- Game capacity
+('GSTATE_FIELD_WINNER'), -- Player Id
 
 ('PSTATE_FIELD_READY'), -- Boolean
 ('PSTATE_FIELD_HAND') -- JSON array

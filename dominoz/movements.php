@@ -118,6 +118,10 @@ class Movements
             'error' => 'Could not update board',
             'status' => 500
         ])->close();
+
+        if (!$hand) {
+            $this->winner();
+        }
     }
 
     public function suggestions()
@@ -140,5 +144,23 @@ class Movements
             }
         }
         return $suggestions;
+    }
+
+    public function winner()
+    {
+        db_statement($this->db, [
+            'sql' => 'UPDATE games SET status = get_enum("GAME_STATUS_ENDED") WHERE id = ?',
+            'bind_param' => ['i', $this->game->getId()],
+            'error' => 'Game status change failed',
+            'status' => 500
+        ]);
+
+        db_statement($this->db, [
+            'sql' => 'INSERT INTO game_state (field, game, value)
+                VALUES (get_enum("GSTATE_FIELD_WINNER"), ?, ?)',
+            'bind_param' => ['ii', $this->game->getId(), $this->player->getId()],
+            'error' => 'Game field change failed',
+            'status' => 500
+        ]);
     }
 }
