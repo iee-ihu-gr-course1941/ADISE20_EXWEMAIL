@@ -14,6 +14,7 @@ $assetMeta = json_decode($assetMeta);
     <meta name="session" content="<?php echo htmlspecialchars(json_encode($_SESSION)); ?>">
     <meta name="assets" content="<?php echo htmlspecialchars(json_encode($assetMeta)); ?>">
     <link rel="stylesheet" href="assets/global-styles.css">
+    <link rel="shortcut icon" type="image/png" href="assets/images/wd.1.icon.ico">
     <title>DominoZ</title>
 </head>
 
