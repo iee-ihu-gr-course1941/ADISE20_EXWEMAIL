@@ -16,6 +16,11 @@
     ],
     "board-bones": [
       "board-bones.html"
+    ],
+    "bone": [
+      "bone.css",
+      "bone-dots.css",
+      "bone.html"
     ]
   },
   "pages": {
