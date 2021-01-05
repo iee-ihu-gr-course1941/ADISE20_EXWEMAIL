@@ -418,7 +418,7 @@ class Game implements \JsonSerializable
             $players[] = [
                 'id' => $gamePlayer->getId(),
                 'username' => $gamePlayer->toArray()['username'],
-                'ready' => $gamePlayer->toArray()['ready'],
+                'ready' => $gamePlayer->toArray()['state']['ready'],
                 'bones' => $hand ? count($hand) : null
             ];
         }
