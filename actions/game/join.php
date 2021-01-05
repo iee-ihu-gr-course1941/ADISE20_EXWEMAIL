@@ -7,8 +7,8 @@ return (function () {
 
     $game = new Game();
     $gameId = $_POST['game-id'];
-    $id = $game->join($gameId);
+    $status = $game->join($gameId);
 
     header('Content-Type: application/json');
-    echo $id;
+    echo json_encode($status);
 })();

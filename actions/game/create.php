@@ -11,8 +11,8 @@ return (function () {
     }
 
     $game = new Game();
-    $id = $game->create($seats);
+    $status = $game->create($seats);
 
     header('Content-Type: application/json');
-    echo $id;
+    echo json_encode($status);
 })();
