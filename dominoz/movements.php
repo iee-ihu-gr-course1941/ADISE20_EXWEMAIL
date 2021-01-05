@@ -7,21 +7,25 @@ class Movements
     private $gameStatus;
     private $player;
 
-    public function __construct($game, $player)
+    public function __construct($game, $player, $status = null)
     {
         require_once(dirname(__FILE__) . '/../includes.php');
         $this->db = db();
         $this->game = $game;
         $this->player = $player;
-        $this->gameStatus = $this->game->getStatus($player);
-
-        if ($this->gameStatus['game']['status'] !== "running") {
-            error_response('Game is not running', 400);
+        if ($status) {
+            $this->gameStatus = $status;
+        } else {
+            $this->gameStatus = $this->game->getStatus($player);
         }
     }
 
     public function place($bone, $position)
     {
+        if ($this->gameStatus['game']['status'] !== "running") {
+            error_response('Game is not running', 400);
+        }
+
         if ($position !== 0 && $position !== 1) {
             error_response('Invalid movement', 400);
         }
@@ -114,5 +118,27 @@ class Movements
             'error' => 'Could not update board',
             'status' => 500
         ])->close();
+    }
+
+    public function suggestions()
+    {
+        if ($this->gameStatus['game']['status'] !== "running") {
+            return null;
+        }
+
+        $board = $this->gameStatus['board'];
+        $hand = $this->gameStatus['hand'];
+        $countBoard = count($board) - 1;
+        $suggestions = [];
+        foreach ($hand as $bone) {
+            if (($board[$countBoard][1] === $bone[0]) ||
+                ($board[0][0] === $bone[1]) ||
+                ($board[0][0] === $bone[0]) ||
+                ($board[$countBoard][1] === $bone[1])
+            ) {
+                $suggestions[] = $bone;
+            }
+        }
+        return $suggestions;
     }
 }
