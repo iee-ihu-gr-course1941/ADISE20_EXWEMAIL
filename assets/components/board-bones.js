@@ -1,13 +1,19 @@
 /* eslint-disable-next-line no-unused-expressions */
-({ self, globals: { session, parseComponent } }) => {
+({ self, globals: { session, parseComponent, renderPage } }) => {
   const playerReady = self.querySelector('.player-ready')
   const playerHand = self.querySelector('.player-hand')
   const gameBoard = self.querySelector('.game-board')
 
-  setInterval(() => {
+  const interval = setInterval(() => {
     fetch('actions/game/status.php')
-      .then(res => res.json())
-      .then(status => {
+      .then(async res => {
+        if (res.status !== 200) {
+          clearInterval(interval)
+          renderPage('lobby')
+        }
+
+        const status = await res.json()
+
         const player = status.players.find(p => p.username === session.user.username)
         if (player.ready) {
           playerReady.style.display = 'none'
