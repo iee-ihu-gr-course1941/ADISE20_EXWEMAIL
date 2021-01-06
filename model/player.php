@@ -17,7 +17,7 @@ class Player implements \JsonSerializable
 
         $this->db = db();
         if (!isset($_SESSION['user'])) {
-            die('Not logged in');
+            error_response('Not logged in', 400);
         }
         $this->user = new User();
     }
@@ -99,7 +99,7 @@ class Player implements \JsonSerializable
     public function toArray()
     {
         if (!isset($this->id)) {
-            die('Player is not initialized');
+            error_response('Player is not initialized', 400);
         }
 
         return [

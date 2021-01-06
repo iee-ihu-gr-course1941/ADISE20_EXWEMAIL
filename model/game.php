@@ -564,7 +564,7 @@ class Game implements \JsonSerializable
     public function toArray()
     {
         if (!isset($this->id)) {
-            die('Game is not initialized');
+            error_response('Game is not initialized', 400);
         }
 
         return [
