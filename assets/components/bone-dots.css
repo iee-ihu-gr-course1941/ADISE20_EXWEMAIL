@@ -1,0 +1,29 @@
+#SELF [data-base-bone="1"].bone-dots > :nth-child(5) > div,
+
+#SELF [data-base-bone="2"].bone-dots > :nth-child(1) > div,
+#SELF [data-base-bone="2"].bone-dots > :nth-child(9) > div,
+
+#SELF [data-base-bone="3"].bone-dots > :nth-child(1) > div,
+#SELF [data-base-bone="3"].bone-dots > :nth-child(5) > div,
+#SELF [data-base-bone="3"].bone-dots > :nth-child(9) > div,
+
+#SELF [data-base-bone="4"].bone-dots > :nth-child(1) > div,
+#SELF [data-base-bone="4"].bone-dots > :nth-child(3) > div,
+#SELF [data-base-bone="4"].bone-dots > :nth-child(7) > div,
+#SELF [data-base-bone="4"].bone-dots > :nth-child(9) > div,
+
+#SELF [data-base-bone="5"].bone-dots > :nth-child(1) > div,
+#SELF [data-base-bone="5"].bone-dots > :nth-child(3) > div,
+#SELF [data-base-bone="5"].bone-dots > :nth-child(5) > div,
+#SELF [data-base-bone="5"].bone-dots > :nth-child(7) > div,
+#SELF [data-base-bone="5"].bone-dots > :nth-child(9) > div,
+
+#SELF [data-base-bone="6"].bone-dots > :nth-child(1) > div,
+#SELF [data-base-bone="6"].bone-dots > :nth-child(2) > div,
+#SELF [data-base-bone="6"].bone-dots > :nth-child(3) > div,
+#SELF [data-base-bone="6"].bone-dots > :nth-child(7) > div,
+#SELF [data-base-bone="6"].bone-dots > :nth-child(8) > div,
+#SELF [data-base-bone="6"].bone-dots > :nth-child(9) > div {
+  background-color: white;
+  border-radius: 50%;
+}

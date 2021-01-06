@@ -28,11 +28,16 @@ window.onload = async function () {
     set session (update) {
       session[update.field] = update.value
     },
+    parseComponent,
     renderPage
   })
 
   if (session.user) {
-    renderPage('lobby')
+    if (session.player) {
+      renderPage('board')
+    } else {
+      renderPage('lobby')
+    }
   } else {
     renderPage('login')
   }
@@ -70,14 +75,14 @@ window.onload = async function () {
     return componentDataPromise
   }
 
-  async function parseComponent (name, isPage = false) {
+  async function parseComponent (name, isPage = false, props = {}) {
     const _name = isPage ? `page-${name}` : `component-${name}`
 
     const componentMeta = componentsAssets.get(_name)
 
     const componentKey = `${_name}--${componentsCounter++}`
     globalComponents.set(componentKey, null)
-    globalInjections.set(componentKey, { globals: commonGlobals })
+    globalInjections.set(componentKey, { globals: commonGlobals, props })
 
     const componentData = await fetchComponent(name, isPage)
 
@@ -149,15 +154,15 @@ window.onload = async function () {
           .map(({ name }) => name)
           .filter(name => re.test(name))
 
+        const renderedInjections = globalInjections.get(renderedKey)
+        if (!Object.prototype.hasOwnProperty.call(renderedInjections, 'events')) {
+          renderedInjections.events = {}
+        }
+
         events.forEach(attr => {
           const eventNamePascal = _dashSplitToPascal(re.exec(attr)[1])
           const localNamePascal = _dashSplitToPascal(nested.getAttribute(attr))
           const localName = 'on' + localNamePascal
-
-          const renderedInjections = globalInjections.get(renderedKey)
-          if (!Object.prototype.hasOwnProperty.call(renderedInjections, 'events')) {
-            renderedInjections.events = {}
-          }
 
           renderedInjections.events['dispatch' + eventNamePascal] = (detail) => {
             component.dispatchEvent(
@@ -166,7 +171,7 @@ window.onload = async function () {
           }
         })
 
-        nested.parentNode.replaceChild(rendered, nested)
+        mount(rendered, nested, (props) => { renderedInjections.props = props })
       })
 
     component.querySelectorAll('[data-base-content]')
@@ -221,5 +226,15 @@ window.onload = async function () {
       .split('-')
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join('')
+  }
+
+  function mount (component, element, setProps) {
+    const props = element.getAttribute('data-base-component-props')
+    if (props) {
+      setProps(
+        JSON.parse(props)
+      )
+    }
+    element.parentNode.replaceChild(component, element)
   }
 }

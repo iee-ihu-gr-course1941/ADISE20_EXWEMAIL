@@ -13,6 +13,17 @@
     "login-form-register": [
       "login-form-register.html",
       "login-form-register.js"
+    ],
+    "board-bones": [
+      "board-bones.css",
+      "board-bones.html",
+      "board-bones.js"
+    ],
+    "bone": [
+      "bone.css",
+      "bone-dots.css",
+      "bone.html",
+      "bone.js"
     ]
   },
   "pages": {
@@ -25,6 +36,11 @@
       "lobby.css",
       "lobby.html",
       "lobby.js"
+    ],
+    "board": [
+      "board.css",
+      "board.html",
+      "board.js"
     ]
   }
 }

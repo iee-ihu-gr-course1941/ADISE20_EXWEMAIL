@@ -2,10 +2,24 @@
 /* eslint-disable-next-line no-unused-expressions */
 ({ self, globals: { renderPage } }) => {
   const listOfGames = self.querySelector('div.ul')
+  const app = document.getElementById('app')
 
-  fetch('actions/game/list.php')
+  const interval = setInterval(() => {
+    if (app.getAttribute('data-base-current-page') !== 'lobby') {
+      clearInterval(interval)
+      return
+    }
+
+    loadGames()
+  }, 2000)
+
+  const loadGames = () => fetch('actions/game/list.php')
     .then(response => response.json())
     .then(data => {
+      while (listOfGames.firstChild) {
+        listOfGames.firstChild.remove()
+      }
+
       if (data.length === 0) {
         const entry = document.createElement('div')
         entry.className = 'li tooltip'
@@ -62,7 +76,7 @@
             body: join
           })
             .then(response => response.json())
-            .then(data => console.log(data))
+            .then(() => renderPage('board'))
         }
         listOfGames.appendChild(entry)
       })
@@ -90,7 +104,7 @@
       body: create
     })
       .then(res => res.json())
-      .then(() => renderPage('board')) // TODO implement page
+      .then(() => renderPage('board'))
   }
   // typing animation
   /* eslint-disable-next-line no-new */

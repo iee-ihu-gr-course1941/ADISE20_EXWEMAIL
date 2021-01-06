@@ -1,0 +1,118 @@
+#SELF {
+  display: flex;
+  width: 100%;
+  bottom: 0;
+  margin-bottom: -2rem;
+  z-index: 9999;
+}
+
+#SELF > .component-body {
+  display: flex;
+  width: 100%;
+}
+
+#SELF .display {
+  width: 0;
+  height: 0;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  margin-top: 40vh;
+  margin-left: calc(50vh - 2rem);
+}
+
+#SELF .current-players {
+  width: 0;
+  height: 0;
+  position: fixed;
+  margin-top: 20vh;
+  margin-left: -3rem;
+}
+
+#SELF .current-players > div {
+  padding-left: 4rem;
+  width: 10rem;
+  background: rgba(16,17,18,0.7);
+  color: white;
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+#SELF .your-turn > h3 {
+  width: 100vh;
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(16,17,18,0.7);
+  color: white;
+}
+
+#SELF > .component-body .player-hand {
+  align-self: flex-end;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  margin-bottom: 4rem;
+}
+
+#SELF > .component-body .game-board {
+  position: fixed;
+  display: flex;
+  width: 0;
+  justify-content: center;
+  margin-left: calc(50vh - 2rem);
+}
+
+#SELF > .component-body .game-board .component {
+  width: 2rem;
+  transform: rotateZ(90deg) rotateX(180deg) scale(20%);
+  transform-origin: 0% 0%;
+}
+
+#SELF > .component-body .player-hand .component {
+  width: 5rem;
+  transform: rotateZ(90deg) rotateX(180deg) scale(50%);
+  transform-origin: 0% 0%;
+}
+
+#SELF > .component-body .player-hand .component-body:hover {
+  margin-left: -2rem;
+}
+
+#SELF .leave{
+  max-width: 8rem;
+  display: flex;
+  position: fixed;
+  margin-top: -3.5rem;
+  margin-left: 0.5rem;
+}
+
+#SELF .btn .btn-button{
+  align-self: center;
+  justify-content: space-evenly;
+  font-size: 1.5rem;
+  font-weight: 400;
+  padding: 9px 28px;
+  margin-top: auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(45,49,51);
+  color: white;
+  transition: all 0.6s ease;
+  border: none;
+}
+
+#SELF .btn .btn-button:hover{
+  background-color: rgb(60,60,60);
+  cursor: pointer;
+  transition: none;
+}
+
+#SELF .btn .btn-button:focus,
+#SELF .btn .btn-button:active{
+  background-color: rgb(255,255,255);
+  color: black;
+  font-weight: 500;
+  border: none;
+  outline: none;
+}
