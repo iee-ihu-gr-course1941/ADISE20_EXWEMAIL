@@ -4,6 +4,7 @@
   const playerHand = self.querySelector('.player-hand')
   const gameBoard = self.querySelector('.game-board')
   const yourTurn = self.querySelector('.your-turn')
+  const leave = self.querySelector('.leave')
 
   const interval = setInterval(() => {
     fetch('actions/game/status.php')
@@ -46,10 +47,12 @@
             body.append('position', 1)
           }
 
-          const boneStr = JSON.stringify(bone)
-          if (!suggestions.includes(boneStr)) {
-            component.querySelectorAll('.bone')
-              .forEach(side => { side.style.opacity = 0.3 })
+          if (status.board.length) {
+            const boneStr = JSON.stringify(bone)
+            if (!suggestions.includes(boneStr)) {
+              component.querySelectorAll('.bone')
+                .forEach(side => { side.style.opacity = 0.3 })
+            }
           }
 
           component.onclick = () => fetch(
@@ -72,4 +75,5 @@
   }, 2000)
 
   playerReady.onclick = () => fetch('actions/game/ready.php', { method: 'POST' })
+  leave.onclick = () => fetch('actions/game/leave.php', { method: 'POST' })
 }

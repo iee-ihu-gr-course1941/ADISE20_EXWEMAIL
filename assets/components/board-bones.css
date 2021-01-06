@@ -55,3 +55,41 @@
 #SELF > .component-body .player-hand .component-body:hover {
   margin-left: -2rem;
 }
+
+#SELF .leave{
+  max-width: 8rem;
+  display: flex;
+  position: fixed;
+  margin-top: -3.5rem;
+  margin-left: 0.5rem;
+}
+
+#SELF .leave .leave-button{
+  align-self: center;
+  justify-content: space-evenly;
+  font-size: 1.5rem;
+  font-weight: 400;
+  padding: 9px 28px;
+  margin-top: auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(45,49,51);
+  color: white;
+  transition: all 0.6s ease;
+  border: none;
+}
+
+#SELF .leave .leave-button:hover{
+  background-color: rgb(60,60,60);
+  cursor: pointer;
+  transition: none;
+}
+
+#SELF .leave .leave-button:focus,
+#SELF .leave .leave-button:active{
+  background-color: rgb(255,255,255);
+  color: black;
+  font-weight: 500;
+  border: none;
+  outline: none;
+}
