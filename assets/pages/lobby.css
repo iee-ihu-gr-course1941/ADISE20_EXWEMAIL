@@ -11,7 +11,42 @@
   color: white;
 }
 
+
+
 /* HEADING-information styling-----------*/
+#SELF .max-width .container .logout{
+  max-width: 8rem;
+  display: flex;
+}
+#SELF .max-width .container .logout .logout-button{
+  align-self: center;
+  justify-content: space-evenly;
+  font-size: 1.5rem;
+  font-weight: 400;
+  padding: 9px 28px;
+  margin-top: auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(45,49,51);
+  color: white;
+  transition: all 0.6s ease;
+  border: none;
+}
+#SELF .max-width .container .logout .logout-button:hover{
+  background-color: rgb(60,60,60);
+  cursor: pointer;
+  transition: none;
+}
+
+#SELF .max-width .container .logout .logout-button:focus,
+#SELF .max-width .container .logout .logout-button:active{
+  background-color: rgb(255,255,255);
+  color: black;
+  font-weight: 500;
+  border: none;
+  outline: none;
+}
+
 #SELF .max-width .container .infor {
   align-content: center;
   margin: auto;
@@ -20,10 +55,14 @@
 
 #SELF .max-width .container .infor h2{
   text-align: center;
-  font-size: 30px;
+  font-size: 2rem;
 }
 
+
+
+
 /* available games styling-----------*/
+
 #SELF .max-width .container .games {
   max-width: 33%;
   max-height: 60vh;
@@ -39,29 +78,136 @@
 
 #SELF .container .games h3{
   margin: auto;
-  font-size: 22px;
+  font-size: 1.75rem;
   padding-left: 3rem;
   padding-bottom: 3vh;
 }
-.container .games ul{
-  list-style-type: none;
-}
 
-#SELF .container .games li{
-  padding: 0.3rem;
+#SELF .container .games .li{
   margin: auto;
-  margin-bottom: 5px;
-  padding-bottom: 5px;
-  margin-top: 5px;
-  padding-top: 5px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.2rem;
   max-width: 60%;
   cursor:pointer;
   background-color:rgb(35,38,40);
   border-radius: 0.5rem;
-  text-align: center;
-  font-size: 18px;
+  font-size: 1.25rem;
   font-weight: 40;
+  justify-content: space-between;
+  transition: all 0.4s ease;
 }
+
+#SELF .container .games .li:hover{
+  background-color: rgb(60,60,60);
+  cursor: pointer;
+}
+
+#SELF .container .games .ul .tooltip {
+  position: relative;
+
+}
+
+#SELF .container .games .ul .tooltip .tooltiptext {
+  display: none;
+  width: fit-content;
+  height: fit-content;
+  background-color:lightgray;
+  color:black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-size: 1rem;
+  white-space: pre;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 999;
+}
+
+#SELF .container .games .ul .tooltip:hover .tooltiptext {
+  display: block !important ;
+}
+/* create game styling--------------------*/
+
+#SELF .max-width .container .create {
+  max-width: 33%;
+  max-height: 20vh;
+  justify-content: space-evenly;
+  padding: 2rem;
+  margin-top: 1rem;
+  margin-left: 33%;
+  background: rgb(42,46,47);
+  border: none;
+  border-radius: 1rem;
+}
+
+#SELF .max-width .container .create h3 {
+  margin: auto;
+  font-size: 1.75rem;
+  padding-left: 3rem;
+  padding-bottom: 3vh;
+}
+
+#SELF .max-width .container .create .player-select {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+/*   droplist styling*/
+#SELF .max-width .container .create .player-select .select{
+  position: relative;
+  width: 10rem;
+  margin: auto;
+  padding: 0.5rem 1rem;
+  max-width: 10vw;
+  cursor:pointer;
+  background-color:rgb(35,38,40);
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  border-style: none;
+  outline: none;
+}
+
+#SELF .max-width .container .create .player-select .select:hover{
+  background: rgb(60,60,60);
+}
+
+
+
+/* create button styling*/
+#SELF .max-width .container .create .player-select .create-game {
+  align-self: center;
+  font-size: 1.25rem;
+  font-weight: 500;
+  padding: 9px 28px;
+  margin-top: auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(35,38,40);
+  color: white;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+#SELF .max-width .container .create .player-select .create-game:hover{
+  background-color: rgb(60,60,60);
+  cursor: pointer;
+}
+
+#SELF .max-width .container .create .player-select .create-game:focus,
+#SELF .max-width .container .create .player-select .create-game:active{
+  background-color: rgb(255,255,255);
+  color: black;
+  font-weight: 500;
+  border: none;
+  outline: none;
+}
+
+
+
 
 /* quick tips ----------------------*/
 
@@ -71,7 +217,7 @@
 }
 
 .max-width .container .rules span {
-  font-size: 26px;
+  font-size: 2rem;
 }
 
 
@@ -79,28 +225,4 @@
 
 #SELF .max-width .container .games::-webkit-scrollbar {
   display:none;
-}
-
-@-moz-document url-prefix() {
-
-  #SELF.container .games ul{
-    list-style-type: none;
-    max-width: fit-content;
-    padding: 2rem;
-  }
-
-  #SELF .container .games li{
-    padding: 0.3rem;
-    margin: auto;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    margin-top: 5px;
-    padding-top: 5px;
-    cursor:pointer;
-    background-color:rgb(35,38,40);
-    border-radius: 0.5rem;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 40;
-  }
 }
