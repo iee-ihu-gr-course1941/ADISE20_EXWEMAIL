@@ -60,10 +60,20 @@
       })
     )
 
+  // logout button function
   const logout = self.querySelector('.logout')
   logout.addEventListener('click', leave, false)
   function leave () {
     console.log('logout')
+  }
+
+  // create game button function
+  const create = self.querySelector('.create-game')
+  create.addEventListener('click', createGame, false)
+  function createGame () {
+    const option = self.querySelector('.select')
+    console.log(option.value)
+    console.log('create')
   }
   // typing animation
   /* eslint-disable-next-line no-new */
