@@ -83,7 +83,36 @@ class Movements
 
         array_splice($hand, $bone, 1);
 
+        db_statement($this->db, [
+            'sql' => 'UPDATE player_state SET value = ?
+                WHERE field = get_enum("PSTATE_FIELD_HAND") AND player = ?',
+            'bind_param' => ['si', json_encode($hand), $playerId],
+            'error' => 'Could not update hand',
+            'status' => 500
+        ])->close();
+        $this->gameStatus['hand'] = $hand;
+
+        db_statement($this->db, [
+            'sql' => 'UPDATE game_state SET value = ?
+                WHERE field = get_enum("GSTATE_FIELD_BOARD") AND game = ?',
+            'bind_param' => ['si', json_encode($board), $this->game->getId()],
+            'error' => 'Could not update board',
+            'status' => 500
+        ])->close();
+
+        $this->nextPlayer();
+
+        if (!$hand) {
+            $this->winner();
+            return;
+        }
+        $this->drawBone();
+    }
+
+    public function nextPlayer()
+    {
         $nextPlayer = 0;
+        $playerId = $this->player->getId();
         $players = $this->gameStatus['players'];
         foreach ($players as $player) {
             if ($player['id'] > $playerId) {
@@ -94,22 +123,7 @@ class Movements
         if (!$nextPlayer) {
             $nextPlayer = $this->gameStatus['players'][0]['id'];
         }
-
-        db_statement($this->db, [
-            'sql' => 'UPDATE player_state SET value = ?
-                WHERE field = get_enum("PSTATE_FIELD_HAND") AND player = ?',
-            'bind_param' => ['si', json_encode($hand), $playerId],
-            'error' => 'Could not update hand',
-            'status' => 500
-        ])->close();
-
-        db_statement($this->db, [
-            'sql' => 'UPDATE game_state SET value = ?
-                WHERE field = get_enum("GSTATE_FIELD_BOARD") AND game = ?',
-            'bind_param' => ['si', json_encode($board), $this->game->getId()],
-            'error' => 'Could not update board',
-            'status' => 500
-        ])->close();
+        $this->gameStatus['turn'] = $nextPlayer;
 
         db_statement($this->db, [
             'sql' => 'UPDATE game_state SET value = ?
@@ -118,10 +132,6 @@ class Movements
             'error' => 'Could not update board',
             'status' => 500
         ])->close();
-
-        if (!$hand) {
-            $this->winner();
-        }
     }
 
     public function suggestions()
@@ -162,5 +172,74 @@ class Movements
             'error' => 'Game field change failed',
             'status' => 500
         ]);
+    }
+
+    public function drawBone()
+    {
+        $player = null;
+        $playerId = $this->gameStatus['turn'];
+
+        foreach ($this->game->toArray()['players'] as $gamePlayer) {
+            if ($gamePlayer->getId() !== $playerId) {
+                continue;
+            }
+
+            $player = $gamePlayer;
+            break;
+        }
+
+        $movements = new Movements($this->game, $player);
+        $suggestions = $movements->suggestions();
+
+        if ($suggestions) {
+            return;
+        }
+
+        $remainingBones = 0;
+        db_statement($this->db, [
+            'sql' => 'SELECT value FROM game_state
+                WHERE field = get_enum("GSTATE_FIELD_REMAINING_BONES") AND game = ?',
+            'bind_param' => ['i', $this->game->getId()],
+            'bind_result' => [&$remainingBones],
+            'error' => 'Insertion failed',
+            'code' => 500
+        ]);
+        $remainingBones = json_decode($remainingBones);
+
+        if (!$remainingBones) {
+            $this->winner();
+            return;
+        }
+
+        $length = count($remainingBones) - 1;
+        $randomNumber = rand(0, $length);
+
+        $hand = $player->toArray()['state']['hand'];
+        $hand[] = $remainingBones[$randomNumber];
+        array_splice($remainingBones, $randomNumber, 1);
+
+        db_statement($this->db, [
+            'sql' => 'UPDATE player_state SET value = ?
+                WHERE field = get_enum("PSTATE_FIELD_HAND") AND player = ?',
+            'bind_param' => ['si', json_encode($hand), $playerId],
+            'error' => 'Could not update hand',
+            'status' => 500
+        ])->close();
+        $player->toArray()['state']['hand'] = $hand;
+
+        db_statement($this->db, [
+            'sql' => 'UPDATE game_state SET value = ?
+                WHERE field = get_enum("GSTATE_FIELD_REMAINING_BONES") AND game = ?',
+            'bind_param' => ['si', json_encode($remainingBones), $this->game->getId()],
+            'error' => 'Could not update hand',
+            'status' => 500
+        ])->close();
+
+        $suggestions = $movements->suggestions();
+
+        if (!$suggestions) {
+            $this->nextPlayer();
+            $this->drawBone();
+        }
     }
 }
