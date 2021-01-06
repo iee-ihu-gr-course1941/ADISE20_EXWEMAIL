@@ -27,6 +27,7 @@
           yourTurn.style.display = 'none'
         }
 
+        const suggestions = JSON.stringify(status.suggestions)
         while (playerHand.firstChild) {
           playerHand.firstChild.remove()
         }
@@ -43,6 +44,12 @@
             body.append('position', 0)
           } else {
             body.append('position', 1)
+          }
+
+          const boneStr = JSON.stringify(bone)
+          if (!suggestions.includes(boneStr)) {
+            component.querySelectorAll('.bone')
+              .forEach(side => { side.style.opacity = 0.3 })
           }
 
           component.onclick = () => fetch(
