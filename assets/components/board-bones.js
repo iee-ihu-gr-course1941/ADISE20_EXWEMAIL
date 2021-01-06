@@ -1,6 +1,6 @@
 /* eslint-disable-next-line no-unused-expressions */
 ({ self, globals: { parseComponent } }) => {
-  const container = self.querySelector('.bones-container')
+  const container = self.querySelector('.player-hand')
   fetch('actions/game/status.php')
     .then(res => res.json())
     .then(status => {

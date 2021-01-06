@@ -1,0 +1,29 @@
+#SELF {
+  display: flex;
+  bottom: 0;
+  margin-bottom: -2rem;
+  width: 100%;
+  z-index: 9999;
+}
+
+#SELF > .component-body {
+  display: flex;
+  width: 100%;
+}
+
+#SELF > .component-body .player-hand {
+  align-self: flex-end;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+#SELF > .component-body .player-hand .component {
+  width: 5rem;
+  transform: rotateZ(90deg) rotateX(180deg) scale(50%);
+  transform-origin: 0% 0%;
+}
+
+#SELF > .component-body .player-hand .component-body:hover {
+  margin-left: -7rem;
+}

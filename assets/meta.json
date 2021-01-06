@@ -15,6 +15,7 @@
       "login-form-register.js"
     ],
     "board-bones": [
+      "board-bones.css",
       "board-bones.html",
       "board-bones.js"
     ],

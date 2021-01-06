@@ -1,3 +1,7 @@
+body {
+  overflow-y: hidden;
+}
+
 #SELF > .page-body {
   display: flex;
   justify-content: space-around;
