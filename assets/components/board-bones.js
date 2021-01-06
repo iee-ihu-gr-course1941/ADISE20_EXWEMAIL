@@ -20,9 +20,11 @@
         const player = status.players.find(p => p.username === session.user.username)
         if (player.ready) {
           playerReady.style.display = 'none'
+          yourTurn.style.display = 'block'
+        } else {
+          yourTurn.style.display = 'none'
         }
 
-        yourTurn.style.display = 'block'
         if (status.game.status === 'waitingForPlayers') {
           yourTurn.querySelector('h3').innerText = 'Waiting for other players ...'
         } else if (status.turn === player.id) {
