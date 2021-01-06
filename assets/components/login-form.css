@@ -65,8 +65,14 @@
 }
 
 /* login and register styling -----------------------------------*/
+#SELF  .component-body .half .component .component-body .fail {
+  background:rgb(35,38,40);
 
-
+}
+#SELF  .component-body .half .component .component-body .fail span{
+  /*display: none;*/
+  color: red;
+}
 
 /* login and register styling--------submit buttons---------------*/
 #SELF  .component .component-body input[type="submit"] {
@@ -76,6 +82,7 @@
   font-weight: 400;
   padding: 9px 28px;
   margin-top: auto;
+  margin-bottom: auto;
   border: none;
   border-radius: 0.5rem;
   background-color: rgb(45,49,51);
@@ -84,7 +91,7 @@
 }
 
 #SELF  .component .component-body input[type="submit"]:hover {
-  background-color: rgb(42,46,47);
+  background-color: rgb(57, 62, 63);
   cursor: pointer;
 }
 #SELF  .component .component-body input:not([type="submit"]){
