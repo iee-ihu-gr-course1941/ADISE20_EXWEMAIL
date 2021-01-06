@@ -64,7 +64,7 @@
   margin-left: 0.5rem;
 }
 
-#SELF .leave .leave-button{
+#SELF .btn .btn-button{
   align-self: center;
   justify-content: space-evenly;
   font-size: 1.5rem;
@@ -79,14 +79,14 @@
   border: none;
 }
 
-#SELF .leave .leave-button:hover{
+#SELF .btn .btn-button:hover{
   background-color: rgb(60,60,60);
   cursor: pointer;
   transition: none;
 }
 
-#SELF .leave .leave-button:focus,
-#SELF .leave .leave-button:active{
+#SELF .btn .btn-button:focus,
+#SELF .btn .btn-button:active{
   background-color: rgb(255,255,255);
   color: black;
   font-weight: 500;
