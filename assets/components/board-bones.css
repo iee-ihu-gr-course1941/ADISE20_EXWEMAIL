@@ -35,6 +35,7 @@
   display: flex;
   width: 100%;
   justify-content: space-around;
+  margin-bottom: 4rem;
 }
 
 #SELF > .component-body .game-board {
@@ -52,5 +53,5 @@
 }
 
 #SELF > .component-body .player-hand .component-body:hover {
-  margin-left: -7rem;
+  margin-left: -2rem;
 }
