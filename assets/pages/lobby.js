@@ -5,8 +5,16 @@
 
   fetch('actions/game/list.php')
     .then(response => response.json())
-    .then(data =>
+    .then(data => {
+      if (data.length === 0) {
+        const entry = document.createElement('div')
+        entry.className = 'li tooltip'
 
+        const codeEl = document.createElement('span')
+        codeEl.innerText = 'No game available, create one!'
+        entry.appendChild(codeEl)
+        listOfGames.appendChild(entry)
+      }
       data.forEach(function (game) {
         const entry = document.createElement('div')
         entry.className = 'li tooltip'
@@ -58,7 +66,7 @@
         }
         listOfGames.appendChild(entry)
       })
-    )
+    })
 
   // logout button function
   const logout = self.querySelector('.logout')
@@ -70,7 +78,7 @@
   // create game button function
   const create = self.querySelector('.create-game')
   create.addEventListener('click', createGame, false)
-  function createGame () {
+  function createGame() {
     const option = self.querySelector('.select')
     console.log(option.value)
     console.log('create')
