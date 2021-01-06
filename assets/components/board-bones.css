@@ -11,6 +11,15 @@
   width: 100%;
 }
 
+#SELF .display {
+  width: 0;
+  height: 0;
+}
+
+#SELF .display > h3 {
+  width: 100vh;
+}
+
 #SELF > .component-body .player-hand {
   align-self: flex-end;
   display: flex;

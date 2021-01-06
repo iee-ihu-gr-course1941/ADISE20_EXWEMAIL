@@ -3,6 +3,7 @@
   const playerReady = self.querySelector('.player-ready')
   const playerHand = self.querySelector('.player-hand')
   const gameBoard = self.querySelector('.game-board')
+  const yourTurn = self.querySelector('.your-turn')
 
   const interval = setInterval(() => {
     fetch('actions/game/status.php')
@@ -17,6 +18,12 @@
         const player = status.players.find(p => p.username === session.user.username)
         if (player.ready) {
           playerReady.style.display = 'none'
+        }
+
+        if (status.turn === player.id) {
+          yourTurn.style.display = 'block'
+        } else {
+          yourTurn.style.display = 'none'
         }
 
         while (playerHand.firstChild) {
