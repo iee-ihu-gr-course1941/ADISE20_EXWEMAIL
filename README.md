@@ -1,35 +1,18 @@
-# ADISE20_EXWEMAIL
+# ADISE20_EXWEMAIL - DominoZ
 
 #### Restrictions
 
 - 2 - 4 players
 
-
-
-# Setup
-
-
-
 ## Dependencies
-
-
-
-### On Windows
 
 1. [PHP 7.0]
 
-
-
 2. [MariaDB 10.1]
-
-
 
 3. [Chrome 49+/Firefox 56+]
 
-
 ## Downloading the project
-
-
 
 Navigate to the folder where you want the project to be saved, open a terminal and run the following command
 
