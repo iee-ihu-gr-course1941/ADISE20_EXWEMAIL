@@ -15,12 +15,14 @@
       "login-form-register.js"
     ],
     "board-bones": [
-      "board-bones.html"
+      "board-bones.html",
+      "board-bones.js"
     ],
     "bone": [
       "bone.css",
       "bone-dots.css",
-      "bone.html"
+      "bone.html",
+      "bone.js"
     ]
   },
   "pages": {
