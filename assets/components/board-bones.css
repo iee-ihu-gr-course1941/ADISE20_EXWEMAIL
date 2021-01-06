@@ -1,8 +1,8 @@
 #SELF {
   display: flex;
+  width: 100%;
   bottom: 0;
   margin-bottom: -2rem;
-  width: 100%;
   z-index: 9999;
 }
 
@@ -27,7 +27,15 @@
   justify-content: space-around;
 }
 
-#SELF > .component-body .player-hand .component {
+#SELF > .component-body .game-board {
+  position: fixed;
+  display: flex;
+  width: 0;
+  justify-content: center;
+  margin-left: calc(50vh - 2rem);
+}
+
+#SELF > .component-body .bones-container .component {
   width: 5rem;
   transform: rotateZ(90deg) rotateX(180deg) scale(50%);
   transform-origin: 0% 0%;
