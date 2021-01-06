@@ -75,17 +75,22 @@
     fetch('actions/logout.php')
       .then(response => response.json())
       .then(data => renderPage('login'))
-
-
   }
 
   // create game button function
   const create = self.querySelector('.create-game')
   create.addEventListener('click', createGame, false)
-  function createGame() {
+  function createGame () {
     const option = self.querySelector('.select')
-    console.log(option.value)
-    console.log('create')
+    const create = new URLSearchParams()
+    create.append('seats', option.value)
+
+    return fetch('actions/game/create.php', {
+      method: 'POST',
+      body: create
+    })
+      .then(res => res.json())
+      .then(() => renderPage('board')) // TODO implement page
   }
   // typing animation
   /* eslint-disable-next-line no-new */
