@@ -103,6 +103,31 @@
   cursor: pointer;
 }
 
+#SELF .container .games .ul .tooltip {
+  position: relative;
+
+}
+
+#SELF .container .games .ul .tooltip .tooltiptext {
+  display: none;
+  width: fit-content;
+  height: fit-content;
+  background-color:lightgray;
+  color:black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-size: 1rem;
+  white-space: pre;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 999;
+}
+
+#SELF .container .games .ul .tooltip:hover .tooltiptext {
+  display: block !important ;
+}
 /* create game styling--------------------*/
 
 #SELF .max-width .container .create {
