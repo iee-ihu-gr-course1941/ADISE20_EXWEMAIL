@@ -60,6 +60,11 @@
       })
     )
 
+  const logout = self.querySelector('.logout')
+  logout.addEventListener('click', leave, false)
+  function leave () {
+    console.log('logout')
+  }
   // typing animation
   /* eslint-disable-next-line no-new */
   new Typed('.typing', {
