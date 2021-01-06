@@ -5,6 +5,7 @@
   const gameBoard = self.querySelector('.game-board')
   const yourTurn = self.querySelector('.your-turn')
   const leave = self.querySelector('.leave')
+  const currentPlayers = self.querySelector('.current-players')
 
   const interval = setInterval(() => {
     fetch('actions/game/status.php')
@@ -16,6 +17,15 @@
         }
 
         const status = await res.json()
+
+        while (currentPlayers.firstChild) {
+          currentPlayers.firstChild.remove()
+        }
+        status.players.forEach(p => {
+          const pDisp = document.createElement('div')
+          pDisp.innerText = `${p.username}${p.ready ? '' : '(Not ready)'}`
+          currentPlayers.appendChild(pDisp)
+        })
 
         const player = status.players.find(p => p.username === session.user.username)
         if (player.ready) {

@@ -21,6 +21,23 @@
   margin-left: calc(50vh - 2rem);
 }
 
+#SELF .current-players {
+  width: 0;
+  height: 0;
+  position: fixed;
+  margin-top: 20vh;
+  margin-left: -3rem;
+}
+
+#SELF .current-players > div {
+  padding-left: 4rem;
+  width: 10rem;
+  background: rgba(16,17,18,0.7);
+  color: white;
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
 #SELF .your-turn > h3 {
   width: 100vh;
   text-align: center;
