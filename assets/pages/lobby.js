@@ -62,7 +62,7 @@
             body: join
           })
             .then(response => response.json())
-            .then(data => console.log(data))
+            .then(() => renderPage('board'))
         }
         listOfGames.appendChild(entry)
       })
@@ -90,7 +90,7 @@
       body: create
     })
       .then(res => res.json())
-      .then(() => renderPage('board')) // TODO implement page
+      .then(() => renderPage('board'))
   }
   // typing animation
   /* eslint-disable-next-line no-new */
