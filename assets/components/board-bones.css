@@ -14,10 +14,20 @@
 #SELF .display {
   width: 0;
   height: 0;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  margin-top: 40vh;
+  margin-left: calc(50vh - 2rem);
 }
 
-#SELF .display > h3 {
+#SELF .your-turn > h3 {
   width: 100vh;
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(16,17,18,0.7);
+  color: white;
 }
 
 #SELF > .component-body .player-hand {
