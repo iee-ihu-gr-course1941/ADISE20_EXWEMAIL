@@ -1,6 +1,6 @@
 /* globals Typed */
 /* eslint-disable-next-line no-unused-expressions */
-({ self }) => {
+({ self, globals: { renderPage } }) => {
   const listOfGames = self.querySelector('div.ul')
 
   fetch('actions/game/list.php')
@@ -72,7 +72,11 @@
   const logout = self.querySelector('.logout')
   logout.addEventListener('click', leave, false)
   function leave () {
-    console.log('logout')
+    fetch('actions/logout.php')
+      .then(response => response.json())
+      .then(data => renderPage('login'))
+
+
   }
 
   // create game button function
