@@ -22,8 +22,14 @@
           playerReady.style.display = 'none'
         }
 
-        if (status.turn === player.id) {
-          yourTurn.style.display = 'block'
+        yourTurn.style.display = 'block'
+        if (status.game.status === 'waitingForPlayers') {
+          yourTurn.querySelector('h3').innerText = 'Waiting for other players ...'
+        } else if (status.turn === player.id) {
+          yourTurn.querySelector('h3').innerText = 'It\'s your turn'
+        } else if (status.game.status === 'running') {
+          const currentPlayer = status.players.find(p => p.id === status.turn).username
+          yourTurn.querySelector('h3').innerText = `It's ${currentPlayer}'s turn`
         } else {
           yourTurn.style.display = 'none'
         }

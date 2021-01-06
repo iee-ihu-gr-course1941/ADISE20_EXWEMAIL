@@ -46,7 +46,13 @@
   margin-left: calc(50vh - 2rem);
 }
 
-#SELF > .component-body .bones-container .component {
+#SELF > .component-body .game-board .component {
+  width: 2rem;
+  transform: rotateZ(90deg) rotateX(180deg) scale(20%);
+  transform-origin: 0% 0%;
+}
+
+#SELF > .component-body .player-hand .component {
   width: 5rem;
   transform: rotateZ(90deg) rotateX(180deg) scale(50%);
   transform-origin: 0% 0%;
