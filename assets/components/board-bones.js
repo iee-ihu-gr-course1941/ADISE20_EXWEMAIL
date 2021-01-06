@@ -10,6 +10,7 @@
       .then(async res => {
         if (res.status !== 200) {
           clearInterval(interval)
+          alert('Game has ended')
           renderPage('lobby')
         }
 
@@ -29,8 +30,27 @@
         while (playerHand.firstChild) {
           playerHand.firstChild.remove()
         }
-        status.hand.forEach(async bone => {
+        status.hand.forEach(async (bone, index) => {
           const { component } = await parseComponent('bone', false, bone)
+
+          const body = new URLSearchParams()
+          body.append('bone', index)
+
+          if (
+            !status.board.length ||
+            bone.includes(status.board[0][0])
+          ) {
+            body.append('position', 0)
+          } else {
+            body.append('position', 1)
+          }
+
+          component.onclick = () => fetch(
+            'actions/movements/place.php',
+            { method: 'POST', body }
+          )
+            .then(res => res.json())
+            .then(data => data.message && alert(data.message))
           playerHand.appendChild(component)
         })
 
