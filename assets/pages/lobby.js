@@ -32,6 +32,7 @@
           const player = game.players
           const floatSpan = document.createElement('span')
           const floatDiv = document.createElement('div')
+          floatDiv.appendChild(floatSpan)
           player.forEach(function (item, index, array) {
             const state = item.state
 
@@ -43,9 +44,7 @@
             floatSpan.className = 'tooltiptext'
             entry.appendChild(floatDiv)
           })
-          floatDiv.appendChild(floatSpan)
         }
-
         // the function of joining a game
         function join () {
           const join = new URLSearchParams()
