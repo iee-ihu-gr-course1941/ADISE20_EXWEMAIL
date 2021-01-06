@@ -19,7 +19,7 @@ class User implements \JsonSerializable
     public function login(string $username, string $password)
     {
         if (isset($this->username)) {
-            die('User logged in');
+            error_response('User logged in', 401);
         }
 
         $stmt = db_statement($this->db, [
@@ -31,13 +31,13 @@ class User implements \JsonSerializable
 
         $result = $stmt->get_result();
         if (!$result) {
-            die('Bad credentials');
+            error_response('Bad credentials', 401);
         }
 
         $user = $result->fetch_assoc();
         $hash = $user['password'];
         if (!password_verify($password, $hash)) {
-            die('Bad credentials');
+            error_response('Bad credentials', 401);
         }
 
         unset($password);
@@ -57,7 +57,7 @@ class User implements \JsonSerializable
     public function register(string $username, string $password)
     {
         if (isset($this->username)) {
-            die('User logged in');
+            error_response('User logged in', 400);
         }
 
         $this->username = $username;
@@ -89,7 +89,7 @@ class User implements \JsonSerializable
     public function toArray()
     {
         if (!isset($this->username)) {
-            die('Not logged in');
+            error_response('Not logged in', 400);
         }
 
         return [

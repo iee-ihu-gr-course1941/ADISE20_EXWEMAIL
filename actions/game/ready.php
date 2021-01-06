@@ -6,8 +6,9 @@ return (function () {
     require_once(dirname(__FILE__) . '/../../includes.php');
 
     $game = new Game();
-    $rows = $game->ready();
+    $game->ready();
+    $status = $status = $game->getStatus();
 
     header('Content-Type: application/json');
-    echo $rows;
+    echo json_encode($status);
 })();

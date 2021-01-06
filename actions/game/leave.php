@@ -9,5 +9,5 @@ return (function () {
     $rows = $game->leave();
 
     header('Content-Type: application/json');
-    echo $rows;
+    echo json_encode(['message'=>'Success']);
 })();
