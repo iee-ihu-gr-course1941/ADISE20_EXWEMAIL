@@ -4,6 +4,18 @@
 
 - 2 - 4 players
 
+#### Play now
+
+- Link: [www.exw.email](https://www.exw.email) (We recommend Firefox)
+
+#### Contact us
+
+- jim3692: jim3692@exw.email
+
+- icedborn: icedborn@exw.email
+
+- kalaitzisxristos: chris@exw.email
+
 ## Dependencies
 
 1. [PHP 7.0]
