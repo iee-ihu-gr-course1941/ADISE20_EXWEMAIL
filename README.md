@@ -36,3 +36,6 @@ git clone https://github.com/iee-ihu-gr-course1941/ADISE20_EXWEMAIL.git
 | `/actions/login` | POST | username: String<br/>password: String | Returns user | Logs user in |
 | `/actions/logout` | POST | none | Success message | Logs current logged in user out |
 | `/actions/register` | POST | username: String<br/>password: String | Returns user | Registers new user |
+
+## Demo Page
+https://users.iee.ihu.gr/~ele516308/dominoz/
